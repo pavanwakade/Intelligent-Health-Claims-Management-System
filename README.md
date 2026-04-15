@@ -97,6 +97,127 @@ AWS_S3_BUCKET_NAME=
 
 ---
 
+## Prerequisites
+
+### System Requirements
+- **OS:** Windows 10/11, macOS, or Linux (Ubuntu 20.04+)
+- **RAM:** Minimum 8GB (16GB recommended for Docker)
+- **Disk:** At least 20GB free space
+- **CPU:** 4 cores (for parallel service development)
+
+### Required Software
+
+#### 1. Java Development Kit (JDK)
+```bash
+# Verify installation
+java -version
+
+# Required: JDK 17 or higher
+# Download: https://adoptium.net/
+```
+
+#### 2. Maven
+```bash
+# Verify installation
+mvn -version
+
+# Required: Maven 3.8+
+# Download: https://maven.apache.org/
+```
+
+#### 3. Python & pip
+```bash
+# Verify installation
+python --version
+pip --version
+
+# Required: Python 3.10+
+# Download: https://www.python.org/
+```
+
+#### 4. Node.js & npm
+```bash
+# Verify installation
+node -v
+npm -v
+
+# Required: Node.js 18+ and npm 9+
+# Download: https://nodejs.org/
+```
+
+#### 5. PostgreSQL
+```bash
+# Verify installation
+psql --version
+
+# Required: PostgreSQL 14+
+# Download: https://www.postgresql.org/download/
+```
+
+#### 6. Redis
+```bash
+# Verify installation
+redis-cli --version
+
+# Required: Redis 6+ (for Celery)
+# Installation: https://redis.io/download
+```
+
+#### 7. Docker & Docker Compose
+```bash
+# Verify installation
+docker --version
+docker-compose --version
+
+# Required: Docker 20.10+, Docker Compose 2.0+
+# Download: https://docs.docker.com/desktop/
+```
+
+#### 8. Git
+```bash
+# Verify installation
+git --version
+
+# Required: Git 2.30+
+# Download: https://git-scm.com/
+```
+
+### Optional Tools
+
+| Tool | Purpose | Download |
+|------|---------|----------|
+| DBeaver / pgAdmin | Database GUI | dbeaver.io / pgadmin.org |
+| Postman / Insomnia | API Testing | postman.com / insomnia.rest |
+| VS Code | Code Editor | code.visualstudio.com |
+| IntelliJ IDEA | Java Development | jetbrains.com/idea |
+| PyCharm | Python Development | jetbrains.com/pycharm |
+
+### Environment Setup Checklist
+
+- [ ] JDK 17+ installed and `JAVA_HOME` configured
+- [ ] Maven 3.8+ installed and in PATH
+- [ ] Python 3.10+ installed with pip
+- [ ] Node.js 18+ installed with npm
+- [ ] PostgreSQL 14+ installed and running
+- [ ] Redis installed and running
+- [ ] Docker Desktop running
+- [ ] Git configured with SSH keys (if using GitHub)
+
+### Port Availability
+
+Ensure the following ports are available:
+- `5432` - PostgreSQL
+- `6379` - Redis
+- `8080` - API Gateway
+- `8081` - Auth Service
+- `8082` - Claims Service
+- `8083` - Policy Service
+- `9001` - Document Service
+- `9002` - Admin Service
+- `3000` - React Dev Server (if running locally)
+
+---
+
 # 7-Day Execution Plan
 
 ## Instructions
