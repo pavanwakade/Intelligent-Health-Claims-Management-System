@@ -1,0 +1,3631 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCMS – Intelligent Health Claims Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #060810;
+            --bg2: #0a0d18;
+            --surface: #0f1221;
+            --surface2: #141829;
+            --surface3: #1a1f35;
+            --border: rgba(99, 102, 241, 0.12);
+            --border2: rgba(99, 102, 241, 0.28);
+            --border3: rgba(99, 102, 241, 0.45);
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --accent2: #22d3ee;
+            --accent3: #f87171;
+            --accent4: #fbbf24;
+            --accent5: #34d399;
+            --text: #e2e8f8;
+            --text2: #a0aac8;
+            --muted: #5a6387;
+            --java: #fb923c;
+            --py: #38bdf8;
+            --db: #4ade80;
+            --card-r: 14px;
+
+            --glow-accent: 0 0 40px rgba(99, 102, 241, 0.2);
+            --glow-accent2: 0 0 40px rgba(34, 211, 238, 0.15);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ═══════════════════ SCROLLBAR ════════════════════ */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 99px;
+        }
+
+        /* ═══════════════════ NAVBAR ════════════════════ */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 58px;
+            isolation: isolate;
+        }
+
+        /* Blur lives here — never bleeds into children */
+        nav::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(6, 8, 16, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: -1;
+        }
+
+        nav::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text);
+            font-weight: 800;
+            font-size: 14px;
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+            text-decoration: none;
+            min-width: 0;
+        }
+
+        .nav-brand-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .nav-links a {
+            display: inline-block;
+            padding: .5rem .9rem;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: all .2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-light);
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--border2);
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border2);
+            color: var(--text);
+            font-size: 18px;
+            cursor: pointer;
+            padding: .4rem .6rem;
+            border-radius: 8px;
+        }
+
+        /* Mobile nav — use translate instead of opacity for animation */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 58px;
+                left: 0;
+                right: 0;
+                width: 100vw;
+                max-width: 100vw;
+                height: calc(100vh - 58px);
+                background: #0f1221;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                filter: none !important;
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1.5rem 1rem;
+                gap: 4px;
+                opacity: 1;
+                visibility: hidden;
+                pointer-events: none;
+                transform: translateY(-10px) translateZ(0);
+                transition: transform .22s ease, visibility .22s ease;
+                z-index: 999;
+                border-top: 1px solid var(--border);
+                overflow-y: auto;
+                will-change: transform;
+                -webkit-font-smoothing: antialiased;
+                text-rendering: optimizeLegibility;
+            }
+
+            .nav-links.open {
+                visibility: visible;
+                pointer-events: auto;
+                transform: translateY(0) translateZ(0);
+            }
+
+            .nav-links a {
+                width: 100%;
+                padding: .7rem 1rem;
+                transform: translateZ(0);
+                -webkit-font-smoothing: antialiased;
+            }
+
+            .nav-links a {
+                width: 100%;
+                padding: .7rem 1rem;
+                /* Force crisp text rendering */
+                transform: translateZ(0);
+                -webkit-font-smoothing: antialiased;
+            }
+        }
+
+        /* ═══════════════════ HERO ════════════════════ */
+        .hero-wrap {
+            position: relative;
+            overflow: hidden;
+            padding: 6rem 2rem 4rem;
+        }
+
+        /* Animated mesh orbs */
+        .hero-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            animation: orbFloat 10s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, transparent 70%);
+            top: -150px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.16) 0%, transparent 70%);
+            top: -50px;
+            right: -50px;
+            animation-delay: -3s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(129, 140, 248, 0.12) 0%, transparent 70%);
+            bottom: 0;
+            left: 40%;
+            animation-delay: -6s;
+        }
+
+        @keyframes orbFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            33% {
+                transform: translateY(-20px) scale(1.05);
+            }
+
+            66% {
+                transform: translateY(10px) scale(0.97);
+            }
+        }
+
+        /* Grid lines overlay */
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(99, 102, 241, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+        }
+
+        .hero-inner {
+            position: relative;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(99, 102, 241, .1);
+            border: 1px solid var(--border2);
+            border-radius: 100px;
+            padding: .35rem 1rem .35rem .6rem;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-light);
+            letter-spacing: .07em;
+            text-transform: uppercase;
+            margin-bottom: 1.75rem;
+            animation: fadeSlideUp .6s ease both;
+        }
+
+        .badge-dot {
+            width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .hero-title {
+            font-size: clamp(2.4rem, 5vw, 3.6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.25rem;
+            animation: fadeSlideUp .6s ease .1s both;
+        }
+
+        .hero-title .grad {
+            background: linear-gradient(135deg, #e2e8f8 0%, var(--accent-light) 40%, var(--accent2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            font-size: 1.05rem;
+            color: var(--text2);
+            max-width: 640px;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            font-weight: 400;
+            animation: fadeSlideUp .6s ease .2s both;
+        }
+
+        .team-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .6rem;
+            margin-bottom: 2.5rem;
+            animation: fadeSlideUp .6s ease .3s both;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: .45rem 1rem;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid;
+            transition: all .2s;
+        }
+
+        .pill:hover {
+            transform: translateY(-2px);
+        }
+
+        .pill-java {
+            color: var(--java);
+            border-color: rgba(251, 146, 60, .3);
+            background: rgba(251, 146, 60, .08);
+        }
+
+        .pill-py {
+            color: var(--py);
+            border-color: rgba(56, 189, 248, .3);
+            background: rgba(56, 189, 248, .08);
+        }
+
+        .pill-teal {
+            color: var(--accent2);
+            border-color: rgba(34, 211, 238, .3);
+            background: rgba(34, 211, 238, .08);
+        }
+
+        .pill-db {
+            color: var(--db);
+            border-color: rgba(74, 222, 128, .3);
+            background: rgba(74, 222, 128, .08);
+        }
+
+        /* ─── Sprint Stats Bar ─── */
+        .hero-stats {
+            display: flex;
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            max-width: 700px;
+            animation: fadeSlideUp .6s ease .4s both;
+        }
+
+        .stat-item {
+            flex: 1;
+            padding: 1rem 1.25rem;
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: background .2s;
+        }
+
+        .stat-item:hover {
+            background: var(--surface2);
+        }
+
+        .stat-num {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+
+        .stat-num.java {
+            color: var(--java);
+        }
+
+        .stat-num.cyan {
+            color: var(--accent2);
+        }
+
+        .stat-num.indigo {
+            color: var(--accent-light);
+        }
+
+        .stat-num.green {
+            color: var(--db);
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--muted);
+            font-weight: 600;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ═══════════════════ SPRINT PROGRESS DASHBOARD ════════════════════ */
+        .sprint-dash {
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            padding: 0 2rem;
+        }
+
+        .sprint-dash-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+
+        .sprint-day-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem .75rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all .25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sprint-day-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform .3s ease;
+        }
+
+        .sprint-day-card:hover {
+            border-color: var(--border2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
+        }
+
+        .sprint-day-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .sprint-day-card.active {
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, .08);
+        }
+
+        .sprint-day-card.active::before {
+            transform: scaleX(1);
+        }
+
+        .sprint-day-num {
+            font-size: 1.1rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: .25rem;
+        }
+
+        .sprint-day-label {
+            font-size: 8.5px;
+            color: var(--muted);
+            font-weight: 700;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            line-height: 1.4;
+        }
+
+        /* ═══════════════════ LAYOUT ════════════════════ */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 2rem 4rem;
+        }
+
+        section {
+            margin-bottom: 5.5rem;
+        }
+
+        /* Reveal animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity .6s ease, transform .6s ease;
+        }
+
+        .reveal.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ═══════════════════ TYPOGRAPHY ════════════════════ */
+        h2 {
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            padding-bottom: .9rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+        }
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: .8rem;
+            color: var(--accent-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h3::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: linear-gradient(180deg, var(--accent), var(--accent2));
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        h4 {
+            font-size: .8rem;
+            font-weight: 700;
+            margin-bottom: .6rem;
+            color: var(--accent2);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        p {
+            color: var(--text2);
+            margin-bottom: .75rem;
+        }
+
+        .section-intro {
+            color: var(--text2);
+            max-width: 700px;
+            margin-bottom: 2rem;
+            font-size: 14px;
+            line-height: 1.8;
+            padding: 1rem 1.25rem;
+            background: rgba(99, 102, 241, .05);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border2), transparent);
+            margin: 2.5rem 0;
+        }
+
+        /* ═══════════════════ CARDS ════════════════════ */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 1rem;
+        }
+
+        .card-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 1rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--card-r);
+            padding: 1.4rem;
+            margin-bottom: 1rem;
+            transition: all .25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity .3s;
+        }
+
+        .card:hover {
+            border-color: var(--border2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .card:hover::before {
+            opacity: 0.6;
+        }
+
+        .card h3 {
+            margin-bottom: .5rem;
+            font-size: .95rem;
+        }
+
+        .card p {
+            font-size: 13px;
+        }
+
+        .card h4 {
+            margin-top: 0;
+        }
+
+        /* Module card */
+        .module {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--card-r);
+            padding: 1.25rem 1.5rem;
+            transition: all .25s ease;
+        }
+
+        .module:hover {
+            border-color: var(--border2);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .3);
+            transform: translateY(-2px);
+        }
+
+        .module-tag {
+            display: inline-block;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            padding: .2rem .65rem;
+            border-radius: 5px;
+            margin-bottom: .75rem;
+        }
+
+        .tag-java {
+            background: rgba(251, 146, 60, .15);
+            color: var(--java);
+        }
+
+        .tag-py {
+            background: rgba(56, 189, 248, .15);
+            color: var(--py);
+        }
+
+        .tag-react {
+            background: rgba(34, 211, 238, .15);
+            color: var(--accent2);
+        }
+
+        .tag-db {
+            background: rgba(74, 222, 128, .15);
+            color: var(--db);
+        }
+
+        /* ═══════════════════ CODE ════════════════════ */
+        pre {
+            background: #060810;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem 1.5rem;
+            overflow-x: auto;
+            margin: .75rem 0 1.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            line-height: 1.75;
+            position: relative;
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, .4), transparent);
+        }
+
+        .kw {
+            color: #c084fc;
+        }
+
+        .str {
+            color: #86efac;
+        }
+
+        .num {
+            color: #fdba74;
+        }
+
+        .key {
+            color: #7dd3fc;
+        }
+
+        .cmt {
+            color: #475569;
+            font-style: italic;
+        }
+
+        .url {
+            color: var(--accent2);
+            font-weight: 500;
+        }
+
+        /* ═══════════════════ HTTP METHOD BADGES ════════════════════ */
+        .method {
+            display: inline-block;
+            font-size: 9.5px;
+            font-weight: 800;
+            padding: .18rem .55rem;
+            border-radius: 5px;
+            margin-right: 7px;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: .05em;
+        }
+
+        .GET {
+            background: rgba(74, 222, 128, .2);
+            color: var(--db);
+            border: 1px solid rgba(74, 222, 128, .3);
+        }
+
+        .POST {
+            background: rgba(99, 102, 241, .2);
+            color: var(--accent-light);
+            border: 1px solid rgba(99, 102, 241, .3);
+        }
+
+        .PUT {
+            background: rgba(251, 191, 36, .2);
+            color: var(--accent4);
+            border: 1px solid rgba(251, 191, 36, .3);
+        }
+
+        .DELETE {
+            background: rgba(248, 113, 113, .2);
+            color: var(--accent3);
+            border: 1px solid rgba(248, 113, 113, .3);
+        }
+
+        .PATCH {
+            background: rgba(34, 211, 238, .2);
+            color: var(--accent2);
+            border: 1px solid rgba(34, 211, 238, .3);
+        }
+
+        /* ═══════════════════ API BLOCKS ════════════════════ */
+        .api-block {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--card-r);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: border-color .2s;
+        }
+
+        .api-block:hover {
+            border-color: var(--border2);
+        }
+
+        .api-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: .85rem 1.25rem;
+            cursor: pointer;
+            border-bottom: 1px solid transparent;
+            transition: background .2s;
+            user-select: none;
+        }
+
+        .api-header:hover {
+            background: var(--surface2);
+        }
+
+        .api-url {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            color: var(--text);
+            flex: 1;
+        }
+
+        .api-auth {
+            font-size: 9.5px;
+            padding: .18rem .55rem;
+            border-radius: 5px;
+            background: rgba(34, 211, 238, .1);
+            color: var(--accent2);
+            font-weight: 700;
+            border: 1px solid rgba(34, 211, 238, .25);
+            letter-spacing: .05em;
+        }
+
+        .api-body {
+            padding: 1.25rem;
+            display: none;
+            border-top: 1px solid var(--border);
+        }
+
+        .api-body.open {
+            display: block;
+        }
+
+        .ch {
+            color: var(--accent-light);
+            font-size: 16px;
+            transition: transform .25s ease;
+        }
+
+        .ch.open {
+            transform: rotate(180deg);
+        }
+
+        .req-res {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .label {
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: .4rem;
+        }
+
+        /* ═══════════════════ TABLES ════════════════════ */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            text-align: left;
+            padding: .65rem 1rem;
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: .07em;
+            text-transform: uppercase;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border);
+            background: rgba(99, 102, 241, .04);
+        }
+
+        td {
+            padding: .65rem 1rem;
+            border-bottom: 1px solid rgba(99, 102, 241, .06);
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(99, 102, 241, .04);
+        }
+
+        td code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            color: var(--accent2);
+            background: rgba(34, 211, 238, .08);
+            padding: .1rem .35rem;
+            border-radius: 4px;
+        }
+
+        .pk {
+            color: #fcd34d;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+        }
+
+        .fk {
+            color: var(--accent-light);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+        }
+
+        /* ═══════════════════ STATUS BADGES ════════════════════ */
+        .status-badge {
+            display: inline-block;
+            font-size: 9.5px;
+            font-weight: 700;
+            padding: .22rem .6rem;
+            border-radius: 5px;
+            letter-spacing: .04em;
+        }
+
+        .s-pending {
+            background: rgba(251, 191, 36, .15);
+            color: var(--accent4);
+        }
+
+        .s-approved {
+            background: rgba(74, 222, 128, .15);
+            color: var(--db);
+        }
+
+        .s-rejected {
+            background: rgba(248, 113, 113, .15);
+            color: var(--accent3);
+        }
+
+        .s-under {
+            background: rgba(99, 102, 241, .15);
+            color: var(--accent-light);
+        }
+
+        /* ═══════════════════ DAY PLAN BLOCKS ════════════════════ */
+        .day-block {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 1.25rem;
+            overflow: hidden;
+            transition: border-color .25s, box-shadow .25s;
+        }
+
+        .day-block:hover {
+            border-color: var(--border2);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, .3);
+        }
+
+        .day-block.open {
+            border-color: var(--border2);
+        }
+
+        .day-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 1px solid transparent;
+            position: relative;
+            transition: background .2s;
+            user-select: none;
+        }
+
+        .day-header:hover {
+            background: rgba(99, 102, 241, .05);
+        }
+
+        .day-header.open {
+            border-bottom-color: var(--border);
+            background: rgba(99, 102, 241, .06);
+        }
+
+        .day-num {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1rem;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, .4);
+            letter-spacing: -0.02em;
+        }
+
+        .day-title {
+            flex: 1;
+        }
+
+        .day-title strong {
+            display: block;
+            font-size: .95rem;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .day-title span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .day-progress {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 10px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .chevron {
+            color: var(--accent-light);
+            transition: transform .3s cubic-bezier(.34, 1.56, .64, 1);
+            font-size: 16px;
+            background: rgba(99, 102, 241, .12);
+            padding: 6px;
+            border-radius: 8px;
+        }
+
+        .chevron.open {
+            transform: rotate(180deg);
+        }
+
+        .day-body {
+            display: none;
+            padding: 1.25rem;
+            gap: 1rem;
+            background: rgba(0, 0, 0, .15);
+        }
+
+        .day-body.open {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        /* ─── Developer cards ─── */
+        .dev-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.4rem;
+            transition: all .25s ease;
+            position: relative;
+        }
+
+        .dev-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, .4);
+        }
+
+        .dev-card.pavan-card {
+            border-left: 3px solid var(--java);
+        }
+
+        .dev-card.rahul-card {
+            border-left: 3px solid var(--py);
+        }
+
+        .dev-card.shubham-card {
+            border-left: 3px solid var(--accent2);
+        }
+
+        .dev-name {
+            font-weight: 700;
+            font-size: .9rem;
+            margin-bottom: .9rem;
+            padding-bottom: .75rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dev-name.pavan {
+            color: var(--java);
+        }
+
+        .dev-name.rahul {
+            color: var(--py);
+        }
+
+        .dev-name.shubham {
+            color: var(--accent2);
+        }
+
+        .dev-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .pavan-card .dev-avatar {
+            background: rgba(251, 146, 60, .15);
+        }
+
+        .rahul-card .dev-avatar {
+            background: rgba(56, 189, 248, .15);
+        }
+
+        .shubham-card .dev-avatar {
+            background: rgba(34, 211, 238, .15);
+        }
+
+        /* ─── Task list ─── */
+        .task-list {
+            list-style: none;
+            width: 100%;
+        }
+
+        .task-list li {
+            font-size: 12.5px;
+            color: var(--text);
+            padding: .5rem .7rem;
+            margin: 4px 0;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .025);
+            border: 1px solid rgba(99, 102, 241, .08);
+            display: flex;
+            align-items: flex-start;
+            transition: all .15s ease;
+        }
+
+        .task-list li:hover {
+            background: rgba(99, 102, 241, .08);
+            border-color: rgba(99, 102, 241, .2);
+            transform: translateX(3px);
+        }
+
+        .task-list li label {
+            display: flex;
+            align-items: flex-start;
+            cursor: pointer;
+            width: 100%;
+            gap: 9px;
+        }
+
+        .task-check {
+            width: 15px;
+            height: 15px;
+            margin-top: 2px;
+            cursor: pointer;
+            accent-color: var(--accent2);
+            flex-shrink: 0;
+        }
+
+        .task-check:checked+span {
+            text-decoration: line-through;
+            opacity: 0.4;
+        }
+
+        .task-ep {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            color: var(--accent-light);
+            background: rgba(99, 102, 241, .12);
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        /* ═══════════════════ GIT STEPS ════════════════════ */
+        .git-step {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            margin-bottom: 1.1rem;
+            padding: .85rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            transition: all .2s;
+        }
+
+        .git-step:hover {
+            border-color: var(--border2);
+            background: var(--surface2);
+        }
+
+        .git-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            color: white;
+            flex-shrink: 0;
+            margin-top: 1px;
+            box-shadow: 0 3px 10px rgba(99, 102, 241, .4);
+        }
+
+        /* ═══════════════════ TOC ════════════════════ */
+        .toc-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: .5rem;
+        }
+
+        .toc-list a {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--text2);
+            font-size: 13px;
+            text-decoration: none;
+            padding: .6rem .85rem;
+            border-radius: 9px;
+            border: 1px solid transparent;
+            transition: all .2s;
+        }
+
+        .toc-list a:hover {
+            color: var(--accent-light);
+            background: rgba(99, 102, 241, .08);
+            border-color: var(--border);
+            transform: translateX(2px);
+        }
+
+        .toc-num {
+            font-size: 10.5px;
+            color: var(--accent);
+            font-weight: 800;
+            width: 18px;
+            flex-shrink: 0;
+        }
+
+        /* ═══════════════════ HIGHLIGHT BOX ════════════════════ */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, .08) 0%, rgba(34, 211, 238, .05) 100%);
+            border: 1px solid rgba(99, 102, 241, .25);
+            border-radius: 14px;
+            padding: 1.75rem;
+        }
+
+        /* ═══════════════════ SCHEMA NOTE ════════════════════ */
+        .schema-note {
+            font-size: 12px;
+            color: var(--muted);
+            font-style: italic;
+            margin-top: .5rem;
+            padding: .6rem .9rem;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        /* ═══════════════════ FOOTER ════════════════════ */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            background: linear-gradient(180deg, transparent, rgba(99, 102, 241, .04));
+        }
+
+        footer .footer-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 15px;
+            color: var(--text);
+            margin-bottom: .75rem;
+        }
+
+        footer .footer-logo span {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .highlight {
+            color: var(--accent2);
+            font-weight: 700;
+        }
+
+        /* ═══════════════════ RESPONSIVE ════════════════════ */
+        @media (max-width: 900px) {
+            .sprint-dash-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            nav {
+                padding: 0 1.25rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 0 .9rem;
+                gap: .75rem;
+            }
+
+            .nav-brand {
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .nav-toggle {
+                display: block;
+                flex-shrink: 0;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 58px;
+                left: 0;
+                right: 0;
+                width: 100vw;
+                max-width: 100vw;
+                height: calc(100vh - 58px);
+                background: var(--surface);
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1.5rem 1rem;
+                gap: 4px;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transition: opacity .2s ease, visibility .2s ease;
+                z-index: 999;
+                border-top: 1px solid var(--border);
+                overflow-y: auto;
+            }
+
+            .nav-links.open {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
+
+            .nav-links a {
+                width: 100%;
+                padding: .7rem 1rem;
+            }
+
+            .hero-wrap {
+                padding: 4rem 1.5rem 3rem;
+            }
+
+            .sprint-dash-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .hero-stats {
+                flex-wrap: wrap;
+            }
+
+            .stat-item {
+                min-width: 120px;
+            }
+
+            .req-res {
+                grid-template-columns: 1fr;
+            }
+
+            .card-grid,
+            .card-grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .day-body.open {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                padding: 0 .75rem;
+            }
+
+            .nav-brand {
+                font-size: 13px;
+            }
+
+            .sprint-dash-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 6px;
+            }
+
+            .sprint-day-card {
+                padding: .7rem .4rem;
+            }
+
+            .sprint-day-label {
+                font-size: 7px;
+            }
+
+            .hero-stats {
+                border-radius: 10px;
+            }
+
+            .stat-item {
+                padding: .85rem 1rem;
+            }
+
+            .stat-num {
+                font-size: 1.3rem;
+            }
+
+            pre {
+                font-size: 11px;
+            }
+        }
+
+        /* ═══════════════════ NAV OVERLAY ════════════════════ */
+        .nav-overlay {
+            display: none;
+            position: fixed;
+            inset: 58px 0 0 0;
+            background: rgba(0, 0, 0, .6);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+        }
+
+        .nav-overlay.open {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ══════════════════════ NAV ══════════════════════ -->
+    <nav>
+        <a href="#overview" class="nav-brand" style="text-decoration:none">
+            <div class="nav-brand-icon">⚕</div>
+            HCMS
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"
+            aria-controls="navLinks">☰</button>
+        <div class="nav-links" id="navLinks" aria-hidden="true">
+            <a href="#overview" class="active">Overview</a>
+            <a href="#prerequisites">Setup</a>
+            <a href="#architecture">Architecture</a>
+            <a href="#database">Database</a>
+            <a href="#apis">APIs</a>
+            <a href="#frontend">Frontend</a>
+            <a href="#auth">Security</a>
+            <a href="#plan">7-Day Plan</a>
+            <a href="#git">Deploy</a>
+        </div>
+    </nav>
+    <div class="nav-overlay" id="navOverlay"></div>
+
+    <!-- ══════════════════════ HERO ══════════════════════ -->
+    <div class="hero-wrap" id="overview">
+        <div class="hero-grid"></div>
+        <div class="orb-1 hero-orb"></div>
+        <div class="orb-2 hero-orb"></div>
+        <div class="orb-3 hero-orb"></div>
+
+        <div class="hero-inner">
+            <div class="hero-badge">
+                <div class="badge-dot">⚡</div>
+                Enterprise MVP Blueprint &nbsp;·&nbsp; 7-Day Execution Sprint
+            </div>
+
+            <h1 class="hero-title">
+                <span class="grad">Intelligent Health Claims</span><br>
+                Management System
+            </h1>
+
+            <p class="hero-sub">
+                A production-grade, microservices-based platform for end-to-end health insurance claims lifecycle
+                management — built by a 3-developer team in 7 days.
+            </p>
+
+            <div class="team-pills">
+                <span class="pill pill-java">⚡ Pavan — Spring Boot / Java</span>
+                <span class="pill pill-py">🐍 Rahul — Python / Django</span>
+                <span class="pill pill-teal">🔷 Shubham — Python / Django</span>
+                <span class="pill pill-db">🗄 PostgreSQL · React · Tailwind</span>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-num java">7</div>
+                    <div class="stat-label">Sprint Days</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num cyan">3</div>
+                    <div class="stat-label">Developers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num indigo">6</div>
+                    <div class="stat-label">Microservices</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num green">30+</div>
+                    <div class="stat-label">API Endpoints</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════ SPRINT DASHBOARD ══════════════════════ -->
+    <div class="sprint-dash">
+        <div class="sprint-dash-grid">
+            <div class="sprint-day-card" onclick="scrollToDay(1)">
+                <div class="sprint-day-num">D1</div>
+                <div class="sprint-day-label">Foundation &amp; Auth</div>
+            </div>
+            <div class="sprint-day-card" onclick="scrollToDay(2)">
+                <div class="sprint-day-num">D2</div>
+                <div class="sprint-day-label">Core Services</div>
+            </div>
+            <div class="sprint-day-card" onclick="scrollToDay(3)">
+                <div class="sprint-day-num">D3</div>
+                <div class="sprint-day-label">Claims Workflow</div>
+            </div>
+            <div class="sprint-day-card" onclick="scrollToDay(4)">
+                <div class="sprint-day-num">D4</div>
+                <div class="sprint-day-label">Admin Dashboard</div>
+            </div>
+            <div class="sprint-day-card" onclick="scrollToDay(5)">
+                <div class="sprint-day-num">D5</div>
+                <div class="sprint-day-label">Integration</div>
+            </div>
+            <div class="sprint-day-card" onclick="scrollToDay(6)">
+                <div class="sprint-day-num">D6</div>
+                <div class="sprint-day-label">Polish &amp; Tests</div>
+            </div>
+            <div class="sprint-day-card" onclick="scrollToDay(7)">
+                <div class="sprint-day-num">D7</div>
+                <div class="sprint-day-label">Docker &amp; Deploy</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════ MAIN CONTENT ══════════════════════ -->
+    <div class="container">
+
+        <!-- ══════════ PREREQUISITES ══════════ -->
+        <section id="prerequisites" class="reveal">
+            <h2><span class="section-num">00</span> Prerequisites</h2>
+            <p class="section-intro">Software, tools, and accounts required before starting the 7-day development
+                sprint. Ensure all dependencies are installed and environment variables are configured.</p>
+
+            <div class="card-grid">
+                <div class="module"><span class="module-tag tag-java">Java</span>
+                    <h3>Java Development Kit (JDK)</h3>
+                    <p>JDK 21 or higher. Required for Spring Boot services. Download from adoptium.net. Set JAVA_HOME
+                        environment variable.</p>
+                </div>
+                <div class="module"><span class="module-tag tag-java">Spring Boot</span>
+                    <h3>Spring Boot CLI / STS</h3>
+                    <p>Spring Boot 3.x. Use Spring Tool Suite (STS) or VS Code with Spring Boot Extension Pack for
+                        faster development.</p>
+                </div>
+                <div class="module"><span class="module-tag tag-py">Python</span>
+                    <h3>Python Runtime</h3>
+                    <p>Python 3.10 or higher. Required for Django services. Download from python.org. Ensure pip is
+                        included.</p>
+                </div>
+                <div class="module"><span class="module-tag tag-py">Django</span>
+                    <h3>Django Framework</h3>
+                    <p>Django 4.2+ with Django REST Framework. Install via pip:
+                        <code>pip install django djangorestframework</code>
+                    </p>
+                </div>
+                <div class="module"><span class="module-tag tag-db">Database</span>
+                    <h3>PostgreSQL</h3>
+                    <p>PostgreSQL 14+ with pgAdmin for GUI management. Create databases: <code>hcms_auth</code>,
+                        <code>hcms_claims</code>, <code>hcms_admin</code>
+                    </p>
+                </div>
+                <div class="module"><span class="module-tag tag-react">Frontend</span>
+                    <h3>Node.js &amp; npm</h3>
+                    <p>Node.js 18+ with npm. Required for React frontend. Download from nodejs.org. Vite as build tool.
+                    </p>
+                </div>
+                <div class="module"><span class="module-tag tag-react">Frontend</span>
+                    <h3>React &amp; Tailwind</h3>
+                    <p>React 18, Tailwind CSS 3.x, React Query, Zustand, React Router v6, Axios, Chart.js for analytics.
+                    </p>
+                </div>
+                <div class="module"><span class="module-tag tag-db">DevOps</span>
+                    <h3>Docker &amp; Docker Compose</h3>
+                    <p>Docker Desktop for containerization. Use Docker Compose to orchestrate all services locally.</p>
+                </div>
+                <div class="module"><span class="module-tag tag-java">Security</span>
+                    <h3>JWT &amp; Security Libraries</h3>
+                    <p>Spring Security with JWT (jjwt library). BCrypt for password hashing. CORS configuration for
+                        cross-origin requests.</p>
+                </div>
+                <div class="module"><span class="module-tag tag-db">Collaboration</span>
+                    <h3>Git &amp; GitHub</h3>
+                    <p>Git CLI. GitHub account for repository hosting. Configure SSH keys. Branch protection rules for
+                        main branch.</p>
+                </div>
+                <div class="module"><span class="module-tag tag-java">API</span>
+                    <h3>API Testing Tools</h3>
+                    <p>Postman or Insomnia for API testing. Test JWT authentication flows and all service endpoints.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════ ARCHITECTURE ══════════ -->
+        <section id="architecture" class="reveal">
+            <h2><span class="section-num">01</span> System Architecture</h2>
+            <p class="section-intro">Distributed microservices architecture with Spring Boot as the API gateway and core
+                services, Django handling admin analytics and document processing, and a shared PostgreSQL layer per
+                bounded domain context.</p>
+
+            <div class="card-grid">
+                <div class="module"><span class="module-tag tag-java">Spring Boot</span>
+                    <h3>Auth Service</h3>
+                    <p>JWT issuance, RBAC enforcement, password encryption (BCrypt). Owns the <code>users</code> table
+                        and roles.</p>
+                </div>
+                <div class="module"><span class="module-tag tag-java">Spring Boot</span>
+                    <h3>Claims Service</h3>
+                    <p>Full lifecycle management: submit → review → approve/reject. Workflow state machine + audit logs.
+                    </p>
+                </div>
+                <div class="module"><span class="module-tag tag-java">Spring Boot</span>
+                    <h3>Policy Service</h3>
+                    <p>Policy CRUD, coverage validation, policy-to-claim linkage, coverage limit enforcement.</p>
+                </div>
+                <div class="module"><span class="module-tag tag-py">Django</span>
+                    <h3>Document Service</h3>
+                    <p>File upload (PDF, JPEG, PNG), metadata storage, S3 integration, virus scanning hooks.</p>
+                </div>
+                <div class="module"><span class="module-tag tag-py">Django</span>
+                    <h3>Admin Dashboard</h3>
+                    <p>Analytics, reporting, agent workflows, bulk approval, charts (Chart.js), KPI tracking.</p>
+                </div>
+                <div class="module"><span class="module-tag tag-java">Gateway</span>
+                    <h3>API Gateway</h3>
+                    <p>Single entry point. Routes, rate-limits, JWT validation, cross-cutting CORS, request logging.</p>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+            <h3>Inter-Service Communication</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>Sync (REST)</h4>
+                    <p>All client-facing operations. Gateway validates JWT then proxies to the correct service on
+                        internal ports. Spring services expose on <code>:808x</code>, Django on <code>:900x</code>.</p>
+                </div>
+                <div class="card">
+                    <h4>Async (Event-Driven)</h4>
+                    <p>Claims status changes publish events consumed by the Notification service. Document upload
+                        triggers validation events. Redis pub/sub or a lightweight queue (RabbitMQ optional).</p>
+                </div>
+                <div class="card">
+                    <h4>Shared Contracts</h4>
+                    <p>Each service validates incoming requests via its own schema. No shared DB across service
+                        boundaries. Django calls Spring APIs via internal HTTP when needed.</p>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+            <h3>Folder Structure</h3>
+            <pre>ihcms/
+├── frontend/                    <span class="cmt"># React + Vite + Tailwind</span>
+│   ├── src/
+│   │   ├── components/         <span class="cmt"># Reusable UI components</span>
+│   │   │   ├── common/         <span class="cmt"># Button, Input, Modal, Card</span>
+│   │   │   ├── layout/         <span class="cmt"># Navbar, Sidebar, Footer</span>
+│   │   │   └── claims/         <span class="cmt"># Claim-specific components</span>
+│   │   ├── pages/              <span class="cmt"># Page components</span>
+│   │   │   ├── auth/           <span class="cmt"># Login, Register</span>
+│   │   │   ├── claims/         <span class="cmt"># ClaimList, ClaimDetail, SubmitClaim</span>
+│   │   │   ├── policies/       <span class="cmt"># PolicyList, PolicyDetail</span>
+│   │   │   ├── dashboard/      <span class="cmt"># UserDashboard, AdminDashboard</span>
+│   │   │   └── admin/          <span class="cmt"># Admin analytics, Reports</span>
+│   │   ├── services/           <span class="cmt"># API calls (Axios)</span>
+│   │   ├── hooks/              <span class="cmt"># Custom React hooks</span>
+│   │   ├── stores/             <span class="cmt"># Zustand state stores</span>
+│   │   ├── utils/              <span class="cmt"># Helpers, formatters</span>
+│   │   └── types/              <span class="cmt"># TypeScript interfaces</span>
+│
+├── backend-spring/              <span class="cmt"># Spring Boot microservices</span>
+│   ├── gateway/                <span class="cmt"># API Gateway (Port 8080)</span>
+│   ├── auth-service/           <span class="cmt"># Auth Service (Port 8081)</span>
+│   ├── claims-service/         <span class="cmt"># Claims Service (Port 8082)</span>
+│   └── policy-service/         <span class="cmt"># Policy Service (Port 8083)</span>
+│
+├── backend-django/              <span class="cmt"># Django services</span>
+│   ├── document_service/       <span class="cmt"># File upload &amp; storage (Port 9001)</span>
+│   └── admin_dashboard/        <span class="cmt"># Analytics &amp; reporting (Port 9002)</span>
+│
+├── docker/                      <span class="cmt"># Docker Compose</span>
+├── scripts/                     <span class="cmt"># init-db.sql, setup-env.sh</span>
+├── docs/                        <span class="cmt"># API.md, DEPLOY.md</span>
+└── README.md</pre>
+        </section>
+
+        <!-- ══════════ DATABASE ══════════ -->
+        <section id="database" class="reveal">
+            <h2><span class="section-num">02</span> Database Design</h2>
+            <p class="section-intro">Per-service schema separation. All tables use UUID primary keys for distribution
+                safety. Timestamps on every entity. Soft deletes via <code>deleted_at</code>.</p>
+
+            <h3>users</h3>
+            <div class="card" style="padding:0;overflow:hidden">
+                <table>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Constraints</th>
+                        <th>Notes</th>
+                    </tr>
+                    <tr>
+                        <td><span class="pk">PK</span> <code>id</code></td>
+                        <td>UUID</td>
+                        <td>PRIMARY KEY, DEFAULT gen_random_uuid()</td>
+                        <td>User identity</td>
+                    </tr>
+                    <tr>
+                        <td><code>email</code></td>
+                        <td>VARCHAR(255)</td>
+                        <td>UNIQUE, NOT NULL</td>
+                        <td>Login credential</td>
+                    </tr>
+                    <tr>
+                        <td><code>password_hash</code></td>
+                        <td>VARCHAR(255)</td>
+                        <td>NOT NULL</td>
+                        <td>BCrypt hash</td>
+                    </tr>
+                    <tr>
+                        <td><code>full_name</code></td>
+                        <td>VARCHAR(200)</td>
+                        <td>NOT NULL</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>phone</code></td>
+                        <td>VARCHAR(20)</td>
+                        <td>UNIQUE</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>role</code></td>
+                        <td>ENUM</td>
+                        <td>NOT NULL, DEFAULT 'USER'</td>
+                        <td>USER | ADMIN | AGENT</td>
+                    </tr>
+                    <tr>
+                        <td><code>is_active</code></td>
+                        <td>BOOLEAN</td>
+                        <td>DEFAULT true</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>created_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NOT NULL, DEFAULT NOW()</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>updated_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NOT NULL</td>
+                        <td>Auto-update trigger</td>
+                    </tr>
+                    <tr>
+                        <td><code>deleted_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NULLABLE</td>
+                        <td>Soft delete</td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3 style="margin-top:1.5rem">policies</h3>
+            <div class="card" style="padding:0;overflow:hidden">
+                <table>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Constraints</th>
+                        <th>Notes</th>
+                    </tr>
+                    <tr>
+                        <td><span class="pk">PK</span> <code>id</code></td>
+                        <td>UUID</td>
+                        <td>PRIMARY KEY</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><span class="fk">FK</span> <code>user_id</code></td>
+                        <td>UUID</td>
+                        <td>REFERENCES users(id)</td>
+                        <td>Policy holder</td>
+                    </tr>
+                    <tr>
+                        <td><code>policy_number</code></td>
+                        <td>VARCHAR(50)</td>
+                        <td>UNIQUE, NOT NULL</td>
+                        <td>Human-readable ID</td>
+                    </tr>
+                    <tr>
+                        <td><code>plan_name</code></td>
+                        <td>VARCHAR(200)</td>
+                        <td>NOT NULL</td>
+                        <td>e.g. Gold Health Plus</td>
+                    </tr>
+                    <tr>
+                        <td><code>coverage_amount</code></td>
+                        <td>DECIMAL(12,2)</td>
+                        <td>NOT NULL, CHECK &gt; 0</td>
+                        <td>Max claimable amount</td>
+                    </tr>
+                    <tr>
+                        <td><code>deductible</code></td>
+                        <td>DECIMAL(12,2)</td>
+                        <td>NOT NULL, DEFAULT 0</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>premium</code></td>
+                        <td>DECIMAL(10,2)</td>
+                        <td>NOT NULL</td>
+                        <td>Monthly premium</td>
+                    </tr>
+                    <tr>
+                        <td><code>start_date</code></td>
+                        <td>DATE</td>
+                        <td>NOT NULL</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>end_date</code></td>
+                        <td>DATE</td>
+                        <td>NOT NULL</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>status</code></td>
+                        <td>ENUM</td>
+                        <td>NOT NULL, DEFAULT 'ACTIVE'</td>
+                        <td>ACTIVE | EXPIRED | CANCELLED</td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3 style="margin-top:1.5rem">claims</h3>
+            <div class="card" style="padding:0;overflow:hidden">
+                <table>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Constraints</th>
+                        <th>Notes</th>
+                    </tr>
+                    <tr>
+                        <td><span class="pk">PK</span> <code>id</code></td>
+                        <td>UUID</td>
+                        <td>PRIMARY KEY</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><span class="fk">FK</span> <code>user_id</code></td>
+                        <td>UUID</td>
+                        <td>REFERENCES users(id)</td>
+                        <td>Claimant</td>
+                    </tr>
+                    <tr>
+                        <td><span class="fk">FK</span> <code>policy_id</code></td>
+                        <td>UUID</td>
+                        <td>REFERENCES policies(id)</td>
+                        <td>Linked policy</td>
+                    </tr>
+                    <tr>
+                        <td><span class="fk">FK</span> <code>assigned_agent_id</code></td>
+                        <td>UUID</td>
+                        <td>REFERENCES users(id), NULLABLE</td>
+                        <td>Reviewing agent</td>
+                    </tr>
+                    <tr>
+                        <td><code>claim_number</code></td>
+                        <td>VARCHAR(50)</td>
+                        <td>UNIQUE, NOT NULL</td>
+                        <td>Auto-generated e.g. CLM-20240001</td>
+                    </tr>
+                    <tr>
+                        <td><code>amount_claimed</code></td>
+                        <td>DECIMAL(12,2)</td>
+                        <td>NOT NULL, CHECK &gt; 0</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>amount_approved</code></td>
+                        <td>DECIMAL(12,2)</td>
+                        <td>NULLABLE</td>
+                        <td>Set on approval</td>
+                    </tr>
+                    <tr>
+                        <td><code>description</code></td>
+                        <td>TEXT</td>
+                        <td>NOT NULL</td>
+                        <td>Nature of claim</td>
+                    </tr>
+                    <tr>
+                        <td><code>incident_date</code></td>
+                        <td>DATE</td>
+                        <td>NOT NULL</td>
+                        <td>When medical event occurred</td>
+                    </tr>
+                    <tr>
+                        <td><code>status</code></td>
+                        <td>ENUM</td>
+                        <td>NOT NULL, DEFAULT 'PENDING'</td>
+                        <td>PENDING | UNDER_REVIEW | APPROVED | REJECTED | CANCELLED</td>
+                    </tr>
+                    <tr>
+                        <td><code>rejection_reason</code></td>
+                        <td>TEXT</td>
+                        <td>NULLABLE</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>submitted_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NOT NULL, DEFAULT NOW()</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>reviewed_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NULLABLE</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>resolved_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NULLABLE</td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3 style="margin-top:1.5rem">documents</h3>
+            <div class="card" style="padding:0;overflow:hidden">
+                <table>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Constraints</th>
+                        <th>Notes</th>
+                    </tr>
+                    <tr>
+                        <td><span class="pk">PK</span> <code>id</code></td>
+                        <td>UUID</td>
+                        <td>PRIMARY KEY</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><span class="fk">FK</span> <code>claim_id</code></td>
+                        <td>UUID</td>
+                        <td>REFERENCES claims(id)</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><span class="fk">FK</span> <code>uploaded_by</code></td>
+                        <td>UUID</td>
+                        <td>REFERENCES users(id)</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>file_name</code></td>
+                        <td>VARCHAR(500)</td>
+                        <td>NOT NULL</td>
+                        <td>Original filename</td>
+                    </tr>
+                    <tr>
+                        <td><code>storage_key</code></td>
+                        <td>VARCHAR(1000)</td>
+                        <td>NOT NULL</td>
+                        <td>S3 object key</td>
+                    </tr>
+                    <tr>
+                        <td><code>file_size</code></td>
+                        <td>BIGINT</td>
+                        <td>NOT NULL</td>
+                        <td>Bytes</td>
+                    </tr>
+                    <tr>
+                        <td><code>mime_type</code></td>
+                        <td>VARCHAR(100)</td>
+                        <td>NOT NULL</td>
+                        <td>application/pdf etc.</td>
+                    </tr>
+                    <tr>
+                        <td><code>doc_type</code></td>
+                        <td>ENUM</td>
+                        <td>NOT NULL</td>
+                        <td>MEDICAL_BILL | PRESCRIPTION | DISCHARGE | OTHER</td>
+                    </tr>
+                    <tr>
+                        <td><code>uploaded_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NOT NULL, DEFAULT NOW()</td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3 style="margin-top:1.5rem">claim_audit_logs</h3>
+            <div class="card" style="padding:0;overflow:hidden">
+                <table>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Constraints</th>
+                    </tr>
+                    <tr>
+                        <td><span class="pk">PK</span> <code>id</code></td>
+                        <td>UUID</td>
+                        <td>PRIMARY KEY</td>
+                    </tr>
+                    <tr>
+                        <td><span class="fk">FK</span> <code>claim_id</code></td>
+                        <td>UUID</td>
+                        <td>REFERENCES claims(id)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="fk">FK</span> <code>actor_id</code></td>
+                        <td>UUID</td>
+                        <td>REFERENCES users(id)</td>
+                    </tr>
+                    <tr>
+                        <td><code>previous_status</code></td>
+                        <td>VARCHAR(50)</td>
+                        <td>NOT NULL</td>
+                    </tr>
+                    <tr>
+                        <td><code>new_status</code></td>
+                        <td>VARCHAR(50)</td>
+                        <td>NOT NULL</td>
+                    </tr>
+                    <tr>
+                        <td><code>notes</code></td>
+                        <td>TEXT</td>
+                        <td>NULLABLE</td>
+                    </tr>
+                    <tr>
+                        <td><code>created_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NOT NULL, DEFAULT NOW()</td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3 style="margin-top:1.5rem">notifications</h3>
+            <div class="card" style="padding:0;overflow:hidden">
+                <table>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Constraints</th>
+                    </tr>
+                    <tr>
+                        <td><span class="pk">PK</span> <code>id</code></td>
+                        <td>UUID</td>
+                        <td>PRIMARY KEY</td>
+                    </tr>
+                    <tr>
+                        <td><span class="fk">FK</span> <code>user_id</code></td>
+                        <td>UUID</td>
+                        <td>REFERENCES users(id)</td>
+                    </tr>
+                    <tr>
+                        <td><code>title</code></td>
+                        <td>VARCHAR(300)</td>
+                        <td>NOT NULL</td>
+                    </tr>
+                    <tr>
+                        <td><code>message</code></td>
+                        <td>TEXT</td>
+                        <td>NOT NULL</td>
+                    </tr>
+                    <tr>
+                        <td><code>is_read</code></td>
+                        <td>BOOLEAN</td>
+                        <td>DEFAULT false</td>
+                    </tr>
+                    <tr>
+                        <td><code>type</code></td>
+                        <td>ENUM</td>
+                        <td>CLAIM_UPDATE | POLICY_EXPIRY | GENERAL</td>
+                    </tr>
+                    <tr>
+                        <td><code>created_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NOT NULL</td>
+                    </tr>
+                </table>
+            </div>
+
+            <p class="schema-note" style="margin-top:1rem">Relationships: users 1→M policies · users 1→M claims ·
+                policies 1→M claims · claims 1→M documents · claims 1→M audit_logs · users 1→M notifications</p>
+        </section>
+
+        <!-- ══════════ APIs ══════════ -->
+        <section id="apis" class="reveal">
+            <h2><span class="section-num">03</span> REST API Contracts</h2>
+            <p class="section-intro">Click any endpoint to expand its request/response schema. All protected endpoints
+                require <code>Authorization: Bearer &lt;token&gt;</code>.</p>
+
+            <h3>Auth Service <span style="color:var(--muted);font-weight:400;font-size:.8rem">— Spring Boot :8081</span>
+            </h3>
+
+            <div class="api-block">
+                <div class="api-header" onclick="toggle(this)">
+                    <span class="method POST">POST</span>
+                    <span class="api-url">/api/auth/register</span>
+                    <span style="flex:1;font-size:12px;color:var(--muted)">Register new user</span>
+                    <span class="ch">▾</span>
+                </div>
+                <div class="api-body">
+                    <div class="req-res">
+                        <div>
+                            <div class="label">Request Body</div>
+                            <pre><span class="kw">{</span>
+  <span class="key">"fullName"</span>: <span class="str">"Amit Sharma"</span>,
+  <span class="key">"email"</span>:    <span class="str">"amit@example.com"</span>,
+  <span class="key">"phone"</span>:    <span class="str">"+91-9876543210"</span>,
+  <span class="key">"password"</span>: <span class="str">"Secure@1234"</span>,
+  <span class="key">"role"</span>:     <span class="str">"USER"</span>
+<span class="kw">}</span></pre>
+                            <div class="label">Validation Rules</div>
+                            <ul class="task-list" style="margin-top:.4rem">
+                                <li>email: valid format, unique</li>
+                                <li>password: min 8 chars, 1 uppercase, 1 special</li>
+                                <li>phone: E.164 format</li>
+                                <li>role: only USER allowed on self-register</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="label">201 Created</div>
+                            <pre><span class="kw">{</span>
+  <span class="key">"userId"</span>:  <span class="str">"uuid-abc-123"</span>,
+  <span class="key">"email"</span>:   <span class="str">"amit@example.com"</span>,
+  <span class="key">"message"</span>: <span class="str">"Registration successful"</span>
+<span class="kw">}</span></pre>
+                            <div class="label">Error Codes</div>
+                            <ul class="task-list" style="margin-top:.4rem">
+                                <li>409 — email already exists</li>
+                                <li>422 — validation failure</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-header" onclick="toggle(this)">
+                    <span class="method POST">POST</span>
+                    <span class="api-url">/api/auth/login</span>
+                    <span style="flex:1;font-size:12px;color:var(--muted)">Authenticate, receive JWT</span>
+                    <span class="ch">▾</span>
+                </div>
+                <div class="api-body">
+                    <div class="req-res">
+                        <div>
+                            <div class="label">Request Body</div>
+                            <pre><span class="kw">{</span>
+  <span class="key">"email"</span>:    <span class="str">"amit@example.com"</span>,
+  <span class="key">"password"</span>: <span class="str">"Secure@1234"</span>
+<span class="kw">}</span></pre>
+                        </div>
+                        <div>
+                            <div class="label">200 OK</div>
+                            <pre><span class="kw">{</span>
+  <span class="key">"accessToken"</span>:  <span class="str">"eyJ..."</span>,
+  <span class="key">"refreshToken"</span>: <span class="str">"eyJ..."</span>,
+  <span class="key">"expiresIn"</span>:    <span class="num">3600</span>,
+  <span class="key">"role"</span>:         <span class="str">"USER"</span>,
+  <span class="key">"userId"</span>:       <span class="str">"uuid-abc-123"</span>
+<span class="kw">}</span></pre>
+                            <ul class="task-list" style="margin-top:.4rem">
+                                <li>401 — invalid credentials</li>
+                                <li>423 — account locked</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-header" onclick="toggle(this)">
+                    <span class="method POST">POST</span>
+                    <span class="api-url">/api/auth/refresh</span>
+                    <span style="flex:1;font-size:12px;color:var(--muted)">Refresh access token</span>
+                    <span class="ch">▾</span>
+                </div>
+                <div class="api-body">
+                    <div class="req-res">
+                        <div>
+                            <div class="label">Request Body</div>
+                            <pre><span class="kw">{ </span><span class="key">"refreshToken"</span>: <span class="str">"eyJ..."</span> <span class="kw">}</span></pre>
+                        </div>
+                        <div>
+                            <div class="label">200 OK</div>
+                            <pre><span class="kw">{</span>
+  <span class="key">"accessToken"</span>: <span class="str">"eyJ..."</span>,
+  <span class="key">"expiresIn"</span>:   <span class="num">3600</span>
+<span class="kw">}</span></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-top:2rem">Claims Service <span
+                    style="color:var(--muted);font-weight:400;font-size:.8rem">— Spring Boot :8082</span></h3>
+
+            <div class="api-block">
+                <div class="api-header" onclick="toggle(this)">
+                    <span class="method POST">POST</span>
+                    <span class="api-url">/api/claims</span>
+                    <span class="api-auth">AUTH</span>
+                    <span style="flex:1;font-size:12px;color:var(--muted)">Submit new claim [USER, AGENT]</span>
+                    <span class="ch">▾</span>
+                </div>
+                <div class="api-body">
+                    <div class="req-res">
+                        <div>
+                            <div class="label">Request Body</div>
+                            <pre><span class="kw">{</span>
+  <span class="key">"policyId"</span>:      <span class="str">"uuid-pol-456"</span>,
+  <span class="key">"amountClaimed"</span>: <span class="num">75000.00</span>,
+  <span class="key">"description"</span>:   <span class="str">"Appendix surgery"</span>,
+  <span class="key">"incidentDate"</span>:  <span class="str">"2024-03-15"</span>
+<span class="kw">}</span></pre>
+                        </div>
+                        <div>
+                            <div class="label">201 Created</div>
+                            <pre><span class="kw">{</span>
+  <span class="key">"claimId"</span>:     <span class="str">"uuid-clm-789"</span>,
+  <span class="key">"claimNumber"</span>: <span class="str">"CLM-20240001"</span>,
+  <span class="key">"status"</span>:      <span class="str">"PENDING"</span>,
+  <span class="key">"submittedAt"</span>: <span class="str">"2024-03-20T..."</span>
+<span class="kw">}</span></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-header" onclick="toggle(this)">
+                    <span class="method GET">GET</span>
+                    <span class="api-url">/api/claims</span>
+                    <span class="api-auth">AUTH</span>
+                    <span style="flex:1;font-size:12px;color:var(--muted)">List claims (paginated, filtered)</span>
+                    <span class="ch">▾</span>
+                </div>
+                <div class="api-body">
+                    <div class="label">Query Params</div>
+                    <ul class="task-list" style="margin-top:.4rem">
+                        <li><code>status</code> — filter by claim status</li>
+                        <li><code>page</code> — page number (default: 0)</li>
+                        <li><code>size</code> — results per page (default: 20)</li>
+                        <li><code>sort</code> — field,direction e.g. <code>submittedAt,desc</code></li>
+                    </ul>
+                    <div class="label" style="margin-top:.75rem">200 OK</div>
+                    <pre><span class="kw">{</span>
+  <span class="key">"content"</span>: [<span class="kw">{</span> <span class="key">"claimId"</span>: <span class="str">"..."</span>, <span class="key">"status"</span>: <span class="str">"PENDING"</span>, ... <span class="kw">}</span>],
+  <span class="key">"totalElements"</span>: <span class="num">128</span>,
+  <span class="key">"totalPages"</span>:    <span class="num">7</span>,
+  <span class="key">"page"</span>:          <span class="num">0</span>
+<span class="kw">}</span></pre>
+                </div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-header" onclick="toggle(this)">
+                    <span class="method PUT">PUT</span>
+                    <span class="api-url">/api/claims/{id}/status</span>
+                    <span class="api-auth">AUTH</span>
+                    <span style="flex:1;font-size:12px;color:var(--muted)">Update claim status [ADMIN, AGENT]</span>
+                    <span class="ch">▾</span>
+                </div>
+                <div class="api-body">
+                    <div class="req-res">
+                        <div>
+                            <div class="label">Request Body</div>
+                            <pre><span class="kw">{</span>
+  <span class="key">"status"</span>:          <span class="str">"APPROVED"</span>,
+  <span class="key">"amountApproved"</span>:  <span class="num">70000.00</span>,
+  <span class="key">"notes"</span>:           <span class="str">"Valid claim, approved"</span>
+<span class="kw">}</span></pre>
+                            <div class="label">Valid Transitions</div>
+                            <ul class="task-list" style="margin-top:.4rem">
+                                <li>PENDING → UNDER_REVIEW</li>
+                                <li>UNDER_REVIEW → APPROVED or REJECTED</li>
+                                <li>PENDING → CANCELLED (by user only)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="label">200 OK</div>
+                            <pre><span class="kw">{</span>
+  <span class="key">"claimId"</span>:     <span class="str">"uuid-clm-789"</span>,
+  <span class="key">"newStatus"</span>:   <span class="str">"APPROVED"</span>,
+  <span class="key">"resolvedAt"</span>:  <span class="str">"2024-03-22T..."</span>
+<span class="kw">}</span></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-top:2rem">Policy Service <span
+                    style="color:var(--muted);font-weight:400;font-size:.8rem">— Spring Boot :8083</span></h3>
+
+            <div class="api-block">
+                <div class="api-header" onclick="toggle(this)">
+                    <span class="method GET">GET</span>
+                    <span class="api-url">/api/policies/my</span>
+                    <span class="api-auth">AUTH</span>
+                    <span style="flex:1;font-size:12px;color:var(--muted)">Get user's policies [USER]</span>
+                    <span class="ch">▾</span>
+                </div>
+                <div class="api-body">
+                    <div class="label">200 OK</div>
+                    <pre><span class="kw">[{</span>
+  <span class="key">"policyId"</span>:       <span class="str">"uuid-pol-456"</span>,
+  <span class="key">"policyNumber"</span>:   <span class="str">"POL-2024-0042"</span>,
+  <span class="key">"planName"</span>:       <span class="str">"Gold Health Plus"</span>,
+  <span class="key">"coverageAmount"</span>: <span class="num">500000.00</span>,
+  <span class="key">"premium"</span>:        <span class="num">2500.00</span>,
+  <span class="key">"status"</span>:         <span class="str">"ACTIVE"</span>,
+  <span class="key">"endDate"</span>:        <span class="str">"2025-01-01"</span>
+<span class="kw">}]</span></pre>
+                </div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-header" onclick="toggle(this)">
+                    <span class="method POST">POST</span>
+                    <span class="api-url">/api/policies</span>
+                    <span class="api-auth">AUTH</span>
+                    <span style="flex:1;font-size:12px;color:var(--muted)">Create policy [ADMIN]</span>
+                    <span class="ch">▾</span>
+                </div>
+                <div class="api-body">
+                    <div class="req-res">
+                        <div>
+                            <div class="label">Request Body</div>
+                            <pre><span class="kw">{</span>
+  <span class="key">"userId"</span>:         <span class="str">"uuid-user-123"</span>,
+  <span class="key">"planName"</span>:       <span class="str">"Silver Plan"</span>,
+  <span class="key">"coverageAmount"</span>: <span class="num">300000.00</span>,
+  <span class="key">"deductible"</span>:     <span class="num">10000.00</span>,
+  <span class="key">"premium"</span>:        <span class="num">1800.00</span>,
+  <span class="key">"startDate"</span>:      <span class="str">"2024-04-01"</span>,
+  <span class="key">"endDate"</span>:        <span class="str">"2025-04-01"</span>
+<span class="kw">}</span></pre>
+                        </div>
+                        <div>
+                            <div class="label">201 Created</div>
+                            <pre><span class="kw">{</span>
+  <span class="key">"policyId"</span>:     <span class="str">"uuid-pol-789"</span>,
+  <span class="key">"policyNumber"</span>: <span class="str">"POL-2024-0043"</span>,
+  <span class="key">"status"</span>:       <span class="str">"ACTIVE"</span>
+<span class="kw">}</span></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-top:2rem">Document Service <span
+                    style="color:var(--muted);font-weight:400;font-size:.8rem">— Django :9001 (Rahul)</span></h3>
+
+            <div class="api-block">
+                <div class="api-header" onclick="toggle(this)">
+                    <span class="method POST">POST</span>
+                    <span class="api-url">/api/documents/upload</span>
+                    <span class="api-auth">AUTH</span>
+                    <span style="flex:1;font-size:12px;color:var(--muted)">Upload document [USER, AGENT]</span>
+                    <span class="ch">▾</span>
+                </div>
+                <div class="api-body">
+                    <div class="req-res">
+                        <div>
+                            <div class="label">Multipart Form Data</div>
+                            <pre><span class="cmt">// Content-Type: multipart/form-data</span>
+<span class="key">file</span>:     [binary PDF/JPEG/PNG]
+<span class="key">claimId</span>: <span class="str">"uuid-claim-9001"</span>
+<span class="key">docType</span>: <span class="str">"MEDICAL_BILL"</span></pre>
+                            <ul class="task-list" style="margin-top:.4rem">
+                                <li>Max size: 10 MB per file</li>
+                                <li>Allowed: PDF, JPEG, PNG</li>
+                                <li>Claim must belong to user</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="label">201 Created</div>
+                            <pre><span class="kw">{</span>
+  <span class="key">"documentId"</span>: <span class="str">"uuid-doc"</span>,
+  <span class="key">"fileName"</span>:   <span class="str">"hospital_bill.pdf"</span>,
+  <span class="key">"docType"</span>:   <span class="str">"MEDICAL_BILL"</span>,
+  <span class="key">"fileSize"</span>:  <span class="num">204800</span>,
+  <span class="key">"uploadedAt"</span>: <span class="str">"2024-03-20T..."</span>
+<span class="kw">}</span></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-header" onclick="toggle(this)">
+                    <span class="method GET">GET</span>
+                    <span class="api-url">/api/documents/{documentId}/download</span>
+                    <span class="api-auth">AUTH</span>
+                    <span style="flex:1;font-size:12px;color:var(--muted)">Get pre-signed download URL [ALL]</span>
+                    <span class="ch">▾</span>
+                </div>
+                <div class="api-body">
+                    <div class="label">200 OK</div>
+                    <pre><span class="kw">{</span>
+  <span class="key">"downloadUrl"</span>: <span class="str">"https://s3.amazonaws.com/...?signature=..."</span>,
+  <span class="key">"expiresAt"</span>:   <span class="str">"2024-03-20T11:30:00Z"</span>
+<span class="kw">}</span></pre>
+                </div>
+            </div>
+
+            <h3 style="margin-top:2rem">Admin Analytics API <span
+                    style="color:var(--muted);font-weight:400;font-size:.8rem">— Django :9002 (Shubham)</span></h3>
+
+            <div class="api-block">
+                <div class="api-header" onclick="toggle(this)">
+                    <span class="method GET">GET</span>
+                    <span class="api-url">/api/admin/analytics/dashboard</span>
+                    <span class="api-auth">AUTH</span>
+                    <span style="flex:1;font-size:12px;color:var(--muted)">KPI summary [ADMIN]</span>
+                    <span class="ch">▾</span>
+                </div>
+                <div class="api-body">
+                    <div class="label">200 OK</div>
+                    <pre><span class="kw">{</span>
+  <span class="key">"totalClaims"</span>:       <span class="num">1248</span>,
+  <span class="key">"pendingClaims"</span>:     <span class="num">87</span>,
+  <span class="key">"approvedThisMonth"</span>: <span class="num">312</span>,
+  <span class="key">"rejectedThisMonth"</span>: <span class="num">45</span>,
+  <span class="key">"totalAmountPaid"</span>:   <span class="num">18750000.00</span>,
+  <span class="key">"avgProcessingDays"</span>: <span class="num">3.2</span>,
+  <span class="key">"claimsByStatus"</span>: <span class="kw">{</span>
+    <span class="key">"PENDING"</span>:      <span class="num">87</span>,
+    <span class="key">"UNDER_REVIEW"</span>: <span class="num">34</span>,
+    <span class="key">"APPROVED"</span>:     <span class="num">1043</span>,
+    <span class="key">"REJECTED"</span>:     <span class="num">84</span>
+  <span class="kw">}</span>,
+  <span class="key">"claimsTimeSeries"</span>: [<span class="kw">{</span> <span class="key">"date"</span>: <span class="str">"2024-03-01"</span>, <span class="key">"count"</span>: <span class="num">28</span> <span class="kw">}</span>, ...]
+<span class="kw">}</span></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════ FRONTEND ══════════ -->
+        <section id="frontend" class="reveal">
+            <h2><span class="section-num">04</span> Frontend Design</h2>
+            <p class="section-intro">React 18 + Tailwind CSS. React Query for server state. Zustand for client state.
+                React Router v6. Axios with JWT interceptors.</p>
+
+            <h3>Project Structure</h3>
+            <pre><span class="cmt">src/</span>
+├── <span class="key">api/</span>          <span class="cmt"># axios instances per service</span>
+│   ├── authApi.js
+│   ├── claimsApi.js
+│   ├── policyApi.js
+│   └── documentApi.js
+├── <span class="key">components/</span>   <span class="cmt"># reusable UI</span>
+│   ├── common/   <span class="cmt"># Button, Modal, Badge, Pagination</span>
+│   ├── claims/   <span class="cmt"># ClaimCard, ClaimStatusBadge, ClaimTimeline</span>
+│   ├── policy/   <span class="cmt"># PolicyCard, CoverageBar</span>
+│   └── layout/   <span class="cmt"># Navbar, Sidebar, ProtectedRoute</span>
+├── <span class="key">pages/</span>
+│   ├── auth/     <span class="cmt"># Login.jsx, Register.jsx</span>
+│   ├── dashboard/ <span class="cmt"># UserDashboard.jsx</span>
+│   ├── claims/   <span class="cmt"># SubmitClaim.jsx, ClaimHistory.jsx, ClaimDetail.jsx</span>
+│   ├── policy/   <span class="cmt"># MyPolicies.jsx</span>
+│   └── admin/    <span class="cmt"># AdminDashboard.jsx, AdminClaims.jsx</span>
+├── <span class="key">store/</span>        <span class="cmt"># Zustand auth + notification store</span>
+├── <span class="key">hooks/</span>        <span class="cmt"># useAuth, useClaims, usePolicy</span>
+└── <span class="key">utils/</span>        <span class="cmt"># formatters, validators, constants</span></pre>
+
+            <h3>Key Pages</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>Login / Register</h4>
+                    <p>JWT stored in memory (not localStorage). Refresh token in httpOnly cookie. Role-based post-login
+                        redirect.</p>
+                </div>
+                <div class="card">
+                    <h4>User Dashboard</h4>
+                    <p>Stat cards: active policies, open claims, recent activity feed, quick action buttons (Submit
+                        Claim, View Policies).</p>
+                </div>
+                <div class="card">
+                    <h4>Submit Claim</h4>
+                    <p>Multi-step form: Policy Selection → Claim Details → Document Upload (drag &amp; drop) → Review
+                        &amp; Submit.</p>
+                </div>
+                <div class="card">
+                    <h4>Claim History</h4>
+                    <p>Paginated table with filter (status, date range, search). Click row → Claim Detail with timeline
+                        + documents.</p>
+                </div>
+                <div class="card">
+                    <h4>Admin Panel</h4>
+                    <p>Django-served analytics page with Chart.js: status donut, monthly bar chart, claims table with
+                        bulk approve/reject.</p>
+                </div>
+                <div class="card">
+                    <h4>Agent View</h4>
+                    <p>Claim queue filtered to assigned claims. Quick status update buttons, notes field, document
+                        preview panel.</p>
+                </div>
+            </div>
+
+            <h3>Axios Interceptor Setup</h3>
+            <pre><span class="cmt">// api/axiosConfig.js</span>
+<span class="kw">const</span> api = axios.create({ baseURL: process.env.REACT_APP_API_URL });
+
+api.interceptors.request.use(config => {
+  <span class="kw">const</span> token = useAuthStore.getState().accessToken;
+  <span class="kw">if</span> (token) config.headers.Authorization = <span class="str">`Bearer ${token}`</span>;
+  <span class="kw">return</span> config;
+});
+
+api.interceptors.response.use(
+  res => res,
+  async err => {
+    <span class="kw">if</span> (err.response?.status === <span class="num">401</span>) {
+      <span class="kw">await</span> refreshAccessToken();
+      <span class="kw">return</span> api(err.config);
+    }
+    <span class="kw">return</span> Promise.reject(err);
+  }
+);</pre>
+        </section>
+
+        <!-- ══════════ DJANGO DASHBOARD ══════════ -->
+        <section id="django" class="reveal">
+            <h2><span class="section-num">05</span> Django Admin Dashboard</h2>
+            <p class="section-intro">Two Django services: Document Service (DRF + file handling) and Admin Analytics
+                (DRF + Chart.js frontend, Django Admin customization).</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h4>Admin Analytics Features</h4>
+                    <ul class="task-list">
+                        <li>Real-time claim status distribution (donut chart)</li>
+                        <li>Monthly claims volume (bar chart)</li>
+                        <li>Amount paid vs claimed (line chart)</li>
+                        <li>Top agents by resolution speed</li>
+                        <li>Bulk claim approval/rejection interface</li>
+                        <li>CSV export for any filtered view</li>
+                        <li>Notification broadcast to users</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Django Admin Customization</h4>
+                    <ul class="task-list">
+                        <li>Custom ModelAdmin for Claims with list_filter, search_fields, date_hierarchy</li>
+                        <li>Custom actions: approve_selected, reject_selected, assign_to_agent</li>
+                        <li>Inline display of documents per claim</li>
+                        <li>Read-only audit log inline on Claim detail page</li>
+                        <li>Custom dashboard at /admin/ with KPI cards</li>
+                        <li>Role-based admin permissions via Django groups</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Django Models (admin_service)</h3>
+            <pre><span class="cmt"># models.py — Admin service reads from shared DB via read replica</span>
+<span class="kw">class</span> ClaimReport(models.Model):
+    <span class="cmt">"""Materialized analytics snapshots refreshed every 15min via Celery"""</span>
+    period       = models.DateField()
+    total_claims = models.IntegerField()
+    approved     = models.IntegerField()
+    rejected     = models.IntegerField()
+    amount_paid  = models.DecimalField(max_digits=14, decimal_places=2)
+    created_at   = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = [<span class="str">'-period'</span>]
+        indexes = [models.Index(fields=[<span class="str">'period'</span>])]</pre>
+        </section>
+
+        <!-- ══════════ AUTH & SECURITY ══════════ -->
+        <section id="auth" class="reveal">
+            <h2><span class="section-num">06</span> Authentication &amp; Security</h2>
+            <p class="section-intro">JWT-based stateless authentication with refresh token rotation, BCrypt password
+                hashing, and method-level RBAC via Spring Security annotations.</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h4>JWT Token Structure</h4>
+                    <pre style="font-size:11.5px"><span class="cmt">// Header</span>
+{ <span class="key">"alg"</span>: <span class="str">"HS512"</span>, <span class="key">"typ"</span>: <span class="str">"JWT"</span> }
+
+<span class="cmt">// Payload (access token, 1hr TTL)</span>
+{
+  <span class="key">"sub"</span>:      <span class="str">"uuid-user-123"</span>,
+  <span class="key">"email"</span>:   <span class="str">"amit@example.com"</span>,
+  <span class="key">"role"</span>:    <span class="str">"USER"</span>,
+  <span class="key">"iat"</span>:     <span class="num">1710925200</span>,
+  <span class="key">"exp"</span>:     <span class="num">1710928800</span>
+}
+
+<span class="cmt">// Refresh token: 7-day TTL, stored server-side</span>
+<span class="cmt">// Refresh token rotation: old token invalidated on use</span></pre>
+                </div>
+                <div class="card">
+                    <h4>Spring Security Config</h4>
+                    <pre style="font-size:11.5px"><span class="cmt">// Endpoint-level role control</span>
+<span class="kw">@PreAuthorize</span>(<span class="str">"hasRole('ADMIN')"</span>)
+<span class="kw">public</span> ResponseEntity updateClaimStatus(...) {}
+
+<span class="cmt">// SecurityFilterChain</span>
+.requestMatchers(<span class="str">"/api/auth/**"</span>).permitAll()
+.requestMatchers(<span class="str">"/api/admin/**"</span>).hasRole(<span class="str">"ADMIN"</span>)
+.requestMatchers(<span class="str">"/api/claims/**"</span>)
+  .hasAnyRole(<span class="str">"USER"</span>,<span class="str">"AGENT"</span>,<span class="str">"ADMIN"</span>)
+.anyRequest().authenticated()</pre>
+                </div>
+            </div>
+
+            <h3>Security Best Practices Checklist</h3>
+            <div class="card" style="padding:0;overflow:hidden">
+                <table>
+                    <tr>
+                        <th>Area</th>
+                        <th>Implementation</th>
+                        <th>Priority</th>
+                    </tr>
+                    <tr>
+                        <td>Passwords</td>
+                        <td><code>BCryptPasswordEncoder(strength=12)</code></td>
+                        <td><span class="status-badge s-rejected">Critical</span></td>
+                    </tr>
+                    <tr>
+                        <td>JWT Storage</td>
+                        <td>Access token in memory, refresh in httpOnly cookie</td>
+                        <td><span class="status-badge s-rejected">Critical</span></td>
+                    </tr>
+                    <tr>
+                        <td>HTTPS</td>
+                        <td>Enforce TLS in production via nginx/load balancer</td>
+                        <td><span class="status-badge s-rejected">Critical</span></td>
+                    </tr>
+                    <tr>
+                        <td>CORS</td>
+                        <td>Whitelist only frontend origin, no wildcard</td>
+                        <td><span class="status-badge s-under">High</span></td>
+                    </tr>
+                    <tr>
+                        <td>Rate Limiting</td>
+                        <td>Login: 5 attempts / 15 min per IP</td>
+                        <td><span class="status-badge s-under">High</span></td>
+                    </tr>
+                    <tr>
+                        <td>Input Validation</td>
+                        <td>Bean Validation (JSR-380) + Django serializers</td>
+                        <td><span class="status-badge s-under">High</span></td>
+                    </tr>
+                    <tr>
+                        <td>SQL Injection</td>
+                        <td>JPA/Hibernate parameterized queries, Django ORM</td>
+                        <td><span class="status-badge s-under">High</span></td>
+                    </tr>
+                    <tr>
+                        <td>File Upload</td>
+                        <td>MIME type check, file size limit, rename on save</td>
+                        <td><span class="status-badge s-approved">Medium</span></td>
+                    </tr>
+                    <tr>
+                        <td>Audit Logging</td>
+                        <td>Log all state changes with actor + timestamp</td>
+                        <td><span class="status-badge s-approved">Medium</span></td>
+                    </tr>
+                    <tr>
+                        <td>Secrets</td>
+                        <td>Environment variables / Docker secrets, never in code</td>
+                        <td><span class="status-badge s-rejected">Critical</span></td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- ══════════ 7-DAY PLAN ══════════ -->
+        <section id="plan" class="reveal">
+            <h2><span class="section-num">07</span> 7-Day Execution Plan</h2>
+            <p class="section-intro">Equal workload distributed across all 3 developers. Each person touches backend,
+                frontend, and database every day. Click a day block to expand the detailed task breakdown.</p>
+
+            <!-- DAY 1 -->
+            <div class="day-block" id="day-block-1">
+                <div class="day-header" onclick="toggleDay(this)">
+                    <div class="day-num">D1</div>
+                    <div class="day-title">
+                        <strong>Foundation: Setup, Auth &amp; Database Scaffolding</strong>
+                        <span>Project structure · JWT auth · All table migrations · CI setup</span>
+                    </div>
+                    <span class="chevron">▾</span>
+                </div>
+                <div class="day-body">
+                    <div class="dev-card pavan-card">
+                        <div class="dev-name pavan">
+                            <div class="dev-avatar">⚡</div> Pavan (Spring Boot)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Init Spring Boot monorepo with
+                                        Maven multi-module (gateway, auth-service, claims-service,
+                                        policy-service)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Configure Spring Security + JWT
+                                        (HMAC-SHA512 signing)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Implement <span
+                                            class="task-ep">POST /api/auth/register</span> and <span
+                                            class="task-ep">POST /api/auth/login</span></span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Create <code>users</code> table
+                                        migration (Flyway)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>BCrypt password encoder bean,
+                                        refresh token entity + repo</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>JwtFilter, SecurityConfig,
+                                        UserDetailsService implementation</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Auth service running on
+                                        :8081 with Postman-tested login/register</span></label></li>
+                        </ul>
+                    </div>
+                    <div class="dev-card rahul-card">
+                        <div class="dev-name rahul">
+                            <div class="dev-avatar">🐍</div> Rahul (Django - Document Service)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Init Django project
+                                        <code>document_service</code> with DRF, configure PostgreSQL</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Create Document, ClaimAuditLog
+                                        models + migrations</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Setup Django CORS headers, JWT
+                                        middleware (djangorestframework-simplejwt)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Implement file upload endpoint
+                                        <span class="task-ep">POST /api/documents/upload</span> with local storage (S3
+                                        later)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Init Vite + React project,
+                                        install Tailwind CSS, React Query, Zustand, Axios</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Build Login page UI with form
+                                        validation (React Hook Form + Zod)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Django doc service +
+                                        React login page rendering</span></label></li>
+                        </ul>
+                    </div>
+                    <div class="dev-card shubham-card">
+                        <div class="dev-name shubham">
+                            <div class="dev-avatar">🔷</div> Shubham (Django - Admin)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Init Django project
+                                        <code>admin_service</code>, configure DRF + PostgreSQL</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Create ClaimReport, Notification
+                                        models + migrations</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Customize Django Admin: register
+                                        User, Policy, Claim ModelAdmins with search/filter</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Setup Celery + Redis for
+                                        background tasks skeleton</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Build Register page,
+                                        shared AuthLayout component, ProtectedRoute HOC</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Implement Zustand auth store with
+                                        token management</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Admin Django app
+                                        running, React auth flow working end-to-end</span></label></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 2 -->
+            <div class="day-block" id="day-block-2">
+                <div class="day-header" onclick="toggleDay(this)">
+                    <div class="day-num">D2</div>
+                    <div class="day-title">
+                        <strong>Core Services: Claims &amp; Policy CRUD</strong>
+                        <span>Claims submission · Policy management · API contracts · Dashboard skeleton</span>
+                    </div>
+                    <span class="chevron">▾</span>
+                </div>
+                <div class="day-body">
+                    <div class="dev-card pavan-card">
+                        <div class="dev-name pavan">
+                            <div class="dev-avatar">⚡</div> Pavan (Spring Boot)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Implement full Claims Service:
+                                        <span class="task-ep">POST /api/claims</span>, <span class="task-ep">GET
+                                            /api/claims</span>, <span class="task-ep">GET
+                                            /api/claims/{id}</span></span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Create <code>claims</code> table
+                                        migration, ClaimRepository with JPA specs for filtering</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>ClaimService with business logic:
+                                        policy validation, amount checks, claim number generation</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Pageable response wrapper
+                                        (PageResponse DTO)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Implement Policy Service: <span
+                                            class="task-ep">POST /api/policies</span>, <span class="task-ep">GET
+                                            /api/policies/my</span>, <span class="task-ep">GET
+                                            /api/policies/{id}</span></span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Create <code>policies</code>
+                                        table migration, coverage remaining calculation</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Claims + Policy REST
+                                        APIs fully functional</span></label></li>
+                        </ul>
+                    </div>
+                    <div class="dev-card rahul-card">
+                        <div class="dev-name rahul">
+                            <div class="dev-avatar">🐍</div> Rahul (Django + React)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Implement <span
+                                            class="task-ep">GET /api/documents/{id}/download</span> with pre-signed URL
+                                        logic</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Build React User Dashboard page:
+                                        stat cards (React Query fetching), recent claims list</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Build Sidebar navigation
+                                        component with role-based menu items</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Implement claimsApi.js (Axios
+                                        abstraction for all claims endpoints)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>ClaimCard reusable component with
+                                        status badge (color-coded by status)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: User Dashboard
+                                        rendering live data from API</span></label></li>
+                        </ul>
+                    </div>
+                    <div class="dev-card shubham-card">
+                        <div class="dev-name shubham">
+                            <div class="dev-avatar">🔷</div> Shubham (Django + React)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Admin service: <span
+                                            class="task-ep">GET /api/admin/analytics/dashboard</span> — aggregate query
+                                        via Django ORM</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Custom Django Admin dashboard
+                                        view with KPI cards (override AdminSite.index)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Build My Policies page
+                                        with PolicyCard component, coverage progress bar</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Build Navbar with notifications
+                                        bell icon + dropdown</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>policyApi.js abstraction
+                                        layer</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Policies page working,
+                                        Admin dashboard KPIs accessible</span></label></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 3 -->
+            <div class="day-block" id="day-block-3">
+                <div class="day-header" onclick="toggleDay(this)">
+                    <div class="day-num">D3</div>
+                    <div class="day-title">
+                        <strong>Claims Workflow: State Machine, Documents &amp; Agent Queue</strong>
+                        <span>Status transitions · File upload UI · Claim detail page · RBAC enforcement</span>
+                    </div>
+                    <span class="chevron">▾</span>
+                </div>
+                <div class="day-body">
+                    <div class="dev-card pavan-card">
+                        <div class="dev-name pavan">
+                            <div class="dev-avatar">⚡</div> Pavan (Spring Boot)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Implement claim state machine:
+                                        <span class="task-ep">PUT /api/claims/{id}/status</span> with transition
+                                        validation</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Create
+                                        <code>claim_audit_logs</code> table + AuditService that logs every
+                                        transition</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Agent assignment endpoint: <span
+                                            class="task-ep">PUT /api/claims/{id}/assign</span> [ADMIN
+                                        only]</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Implement refresh token endpoint:
+                                        <span class="task-ep">POST /api/auth/refresh</span></span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Spring Boot Actuator + custom
+                                        health checks for each service</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Full claims lifecycle
+                                        with audit trail</span></label></li>
+                        </ul>
+                    </div>
+                    <div class="dev-card rahul-card">
+                        <div class="dev-name rahul">
+                            <div class="dev-avatar">🐍</div> Rahul (Django + React)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Django: Implement document list
+                                        endpoint <span class="task-ep">GET
+                                            /api/documents/claim/{claimId}</span></span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>File type MIME validation + size
+                                        enforcement in Django serializer</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Build Submit Claim
+                                        multi-step form (Step 1: policy select, Step 2: details, Step 3:
+                                        upload)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Drag-and-drop file upload
+                                        component using react-dropzone</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Upload progress bar with Axios
+                                        onUploadProgress</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Full claim submission
+                                        flow working with document upload</span></label></li>
+                        </ul>
+                    </div>
+                    <div class="dev-card shubham-card">
+                        <div class="dev-name shubham">
+                            <div class="dev-avatar">🔷</div> Shubham (Django + React)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Django Admin: Custom bulk_approve
+                                        and bulk_reject actions on ClaimAdmin</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Inline DocumentInline on Claim
+                                        detail in Django Admin</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Build Claim Detail page
+                                        with status timeline (ClaimTimeline component)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Build Claim History page:
+                                        paginated table with status filter, date range picker</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Status badge + color mapping
+                                        utility</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Claim History and
+                                        Detail pages fully functional</span></label></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 4 -->
+            <div class="day-block" id="day-block-4">
+                <div class="day-header" onclick="toggleDay(this)">
+                    <div class="day-num">D4</div>
+                    <div class="day-title">
+                        <strong>Admin Dashboard: Analytics, Charts &amp; Agent Interface</strong>
+                        <span>Chart.js charts · Agent claim queue · Notifications · Policy admin</span>
+                    </div>
+                    <span class="chevron">▾</span>
+                </div>
+                <div class="day-body">
+                    <div class="dev-card pavan-card">
+                        <div class="dev-name pavan">
+                            <div class="dev-avatar">⚡</div> Pavan (Spring Boot)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Policy admin endpoints: <span
+                                            class="task-ep">PUT /api/policies/{id}</span>, <span class="task-ep">DELETE
+                                            /api/policies/{id}</span> [ADMIN]</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Implement <span
+                                            class="task-ep">GET /api/claims/agent/queue</span> — paginated claims
+                                        assigned to requesting agent</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Notification service: <span
+                                            class="task-ep">GET /api/notifications</span>, <span class="task-ep">PUT
+                                            /api/notifications/{id}/read</span></span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Create <code>notifications</code>
+                                        table migration + async notification trigger on claim status
+                                        change</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Global exception handler
+                                        (@ControllerAdvice) with standardized error response</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Agent queue,
+                                        notifications, policy admin APIs done</span></label></li>
+                        </ul>
+                    </div>
+                    <div class="dev-card rahul-card">
+                        <div class="dev-name rahul">
+                            <div class="dev-avatar">🐍</div> Rahul (Django + React)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Django analytics: <span
+                                            class="task-ep">GET /api/admin/analytics/claims-timeseries</span> for
+                                        monthly bar chart data</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Build Admin Dashboard page
+                                        with Chart.js charts: status donut + monthly bar</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Claims table in admin view with
+                                        quick-action buttons (Approve / Reject)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Modal component for reject with
+                                        reason text input</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React Query optimistic updates on
+                                        claim status change</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Admin analytics page
+                                        with live charts</span></label></li>
+                        </ul>
+                    </div>
+                    <div class="dev-card shubham-card">
+                        <div class="dev-name shubham">
+                            <div class="dev-avatar">🔷</div> Shubham (Django + React)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Django analytics: <span
+                                            class="task-ep">GET /api/admin/analytics/agents</span> — agent performance
+                                        metrics</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Django: CSV export endpoint <span
+                                            class="task-ep">GET
+                                            /api/admin/claims/export?format=csv</span></span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Build Agent view — claim
+                                        queue with filter, claim cards with status update dropdowns</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Notification dropdown in Navbar,
+                                        mark-read functionality</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>notificationApi.js abstraction +
+                                        Zustand notification count badge</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Agent queue,
+                                        notifications fully working in React</span></label></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 5 -->
+            <div class="day-block" id="day-block-5">
+                <div class="day-header" onclick="toggleDay(this)">
+                    <div class="day-num">D5</div>
+                    <div class="day-title">
+                        <strong>Integration, API Gateway &amp; Security Hardening</strong>
+                        <span>Gateway routing · Rate limiting · CORS · End-to-end integration testing</span>
+                    </div>
+                    <span class="chevron">▾</span>
+                </div>
+                <div class="day-body">
+                    <div class="dev-card pavan-card">
+                        <div class="dev-name pavan">
+                            <div class="dev-avatar">⚡</div> Pavan (Spring Boot)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Configure API Gateway routing
+                                        rules — proxy all /api/documents/** to Django :9001</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Implement rate limiting with
+                                        Bucket4j (5 req/s per user, 20 req/s per IP)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>CORS configuration: whitelist
+                                        only React dev origin + production domain</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>JWT validation in gateway filter
+                                        (no downstream services re-validate)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Request logging filter with
+                                        correlation ID (MDC)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Write Spring Boot integration
+                                        tests for auth + claims endpoints</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: All services reachable
+                                        via single gateway on :8080</span></label></li>
+                        </ul>
+                    </div>
+                    <div class="dev-card rahul-card">
+                        <div class="dev-name rahul">
+                            <div class="dev-avatar">🐍</div> Rahul (Django + React)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Django: Configure JWT middleware
+                                        to validate tokens from Spring Auth service public key</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>DRF throttling (AnonRateThrottle,
+                                        UserRateThrottle)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Write Django unit tests for
+                                        document upload, permissions</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Axios interceptor for 401
+                                        → auto refresh token → retry logic</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Global error boundary +
+                                        toast notification system (react-hot-toast)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Form validation error
+                                        display on all forms (Zod schemas)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Auth refresh working
+                                        seamlessly, error handling polished</span></label></li>
+                        </ul>
+                    </div>
+                    <div class="dev-card shubham-card">
+                        <div class="dev-name shubham">
+                            <div class="dev-avatar">🔷</div> Shubham (Django + React)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Django: Add Django-guardian for
+                                        object-level permissions (agent can only see assigned claims)</span></label>
+                            </li>
+                            <li><label><input type="checkbox" class="task-check"><span>Celery task:
+                                        RefreshAnalyticsSnapshot runs every 15 minutes</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Write Django tests for admin
+                                        analytics endpoints</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Implement ProtectedRoute
+                                        with role check (redirects ADMIN→admin, USER→dashboard)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: 404 and Unauthorized
+                                        pages</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Full end-to-end test: register →
+                                        login → submit claim → admin approves → user notified</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Complete flow tested
+                                        end-to-end</span></label></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 6 -->
+            <div class="day-block" id="day-block-6">
+                <div class="day-header" onclick="toggleDay(this)">
+                    <div class="day-num">D6</div>
+                    <div class="day-title">
+                        <strong>Polish, Edge Cases, Validation &amp; Performance</strong>
+                        <span>Loading states · Empty states · Input sanitization · Responsive UI · Optimizations</span>
+                    </div>
+                    <span class="chevron">▾</span>
+                </div>
+                <div class="day-body">
+                    <div class="dev-card pavan-card">
+                        <div class="dev-name pavan">
+                            <div class="dev-avatar">⚡</div> Pavan (Spring Boot)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Add database indexes:
+                                        claims(user_id, status), claims(policy_id), documents(claim_id)</span></label>
+                            </li>
+                            <li><label><input type="checkbox" class="task-check"><span>Implement search endpoint: <span
+                                            class="task-ep">GET /api/claims/search?q=CLM-2024</span></span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Add @Valid annotations + Bean
+                                        Validation to all request DTOs</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Standardize all API error
+                                        responses (code, message, timestamp, path)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Swagger/OpenAPI 3.0 documentation
+                                        for all Spring Boot endpoints</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Write JUnit 5 unit tests for
+                                        ClaimService business logic (state machine)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Polished, documented,
+                                        indexed backend</span></label></li>
+                        </ul>
+                    </div>
+                    <div class="dev-card rahul-card">
+                        <div class="dev-name rahul">
+                            <div class="dev-avatar">🐍</div> Rahul (Django + React)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Django: drf-spectacular for auto
+                                        OpenAPI docs on Django services</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Document virus scan placeholder
+                                        (ClamAV hook) + file rename on upload</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Loading skeletons on all
+                                        data-fetching pages (React Query isLoading)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Empty state components (no
+                                        claims yet, no policies)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Fully responsive layout
+                                        (mobile sidebar drawer, responsive tables)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Debounced search input on
+                                        Claim History page</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Polished,
+                                        mobile-friendly UI</span></label></li>
+                        </ul>
+                    </div>
+                    <div class="dev-card shubham-card">
+                        <div class="dev-name shubham">
+                            <div class="dev-avatar">🔷</div> Shubham (Django + React)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Django: Pagination on all list
+                                        endpoints, consistent response envelope</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Add Django signals for audit
+                                        logging on Claim model save</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Confirmation dialogs
+                                        before destructive actions (reject, cancel claim)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Date formatting with
+                                        date-fns, currency formatting with Intl.NumberFormat</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: React Query cache
+                                        invalidation strategy (staleTime, refetchOnWindowFocus)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Write React component tests with
+                                        Vitest + Testing Library for ClaimCard</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: Stable, well-tested
+                                        frontend</span></label></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAY 7 -->
+            <div class="day-block" id="day-block-7">
+                <div class="day-header" onclick="toggleDay(this)">
+                    <div class="day-num">D7</div>
+                    <div class="day-title">
+                        <strong>Docker, Deployment &amp; Final Demo</strong>
+                        <span>Dockerfiles · docker-compose · README · Environment config · Demo run-through</span>
+                    </div>
+                    <span class="chevron">▾</span>
+                </div>
+                <div class="day-body">
+                    <div class="dev-card pavan-card">
+                        <div class="dev-name pavan">
+                            <div class="dev-avatar">⚡</div> Pavan (Spring Boot)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Dockerfile for each Spring Boot
+                                        service (multi-stage: Maven build → JRE 17 slim)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>docker-compose.yml: PostgreSQL +
+                                        Redis + all 4 Spring services + network config</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Environment variable
+                                        externalization (application.yml → env vars)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Database seed script: admin user,
+                                        sample agent, 3 policies</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Spring Boot production profile:
+                                        connection pooling (HikariCP), logging config</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: All Spring services
+                                        running via docker-compose up</span></label></li>
+                        </ul>
+                    </div>
+                    <div class="dev-card rahul-card">
+                        <div class="dev-name rahul">
+                            <div class="dev-avatar">🐍</div> Rahul (Django + React)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Dockerfile for Django document
+                                        service (gunicorn, collectstatic)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>React: Production build
+                                        optimizations (Vite config, code splitting by route)</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Nginx config: serve React build,
+                                        proxy /api to gateway, gzip compression</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Django: gunicorn WSGI config,
+                                        static files via WhiteNoise</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Write comprehensive README.md:
+                                        setup, env vars, API examples</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: React + Django doc
+                                        service containerized</span></label></li>
+                        </ul>
+                    </div>
+                    <div class="dev-card shubham-card">
+                        <div class="dev-name shubham">
+                            <div class="dev-avatar">🔷</div> Shubham (Django + React)
+                        </div>
+                        <ul class="task-list">
+                            <li><label><input type="checkbox" class="task-check"><span>Dockerfile for Django admin
+                                        service + Celery worker</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Add all services to
+                                        docker-compose.yml with health checks and depends_on</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Django: management command to
+                                        seed admin user + sample data</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Full integration demo: run
+                                        docker-compose, walk through complete user journey</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Record screen demo video
+                                        (optional) for portfolio</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>Final code review: remove debug
+                                        logs, ensure no secrets in code, merge to main</span></label></li>
+                            <li><label><input type="checkbox" class="task-check"><span>✅ Output: One-command
+                                        <code>docker-compose up</code> runs the entire system</span></label></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════ GIT & DEPLOY ══════════ -->
+        <section id="git" class="reveal">
+            <h2><span class="section-num">08</span> Git Workflow &amp; Deployment</h2>
+
+            <h3>Branch Strategy</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>Branch Model</h4>
+                    <pre style="font-size:12px">main          <span class="cmt"># production-ready only</span>
+develop       <span class="cmt"># integration branch</span>
+feature/*     <span class="cmt"># short-lived feature branches</span>
+hotfix/*      <span class="cmt"># emergency fixes to main</span></pre>
+                </div>
+                <div class="card">
+                    <h4>Naming Convention</h4>
+                    <pre style="font-size:12px">feature/pavan-auth-jwt
+feature/rahul-doc-upload
+feature/shubham-admin-charts
+hotfix/claim-status-bug</pre>
+                </div>
+            </div>
+
+            <h3>Git Workflow Steps</h3>
+            <div class="git-step">
+                <div class="git-num">1</div>
+                <div><strong>Feature branch off develop</strong> —
+                    <code>git checkout -b feature/your-task develop</code>
+                </div>
+            </div>
+            <div class="git-step">
+                <div class="git-num">2</div>
+                <div><strong>Commit often</strong> — conventional commits: <code>feat:</code>, <code>fix:</code>,
+                    <code>refactor:</code>, <code>test:</code>, <code>docs:</code>
+                </div>
+            </div>
+            <div class="git-step">
+                <div class="git-num">3</div>
+                <div><strong>Pull Request to develop</strong> — require 1 teammate review before merge. PR description
+                    links the task.</div>
+            </div>
+            <div class="git-step">
+                <div class="git-num">4</div>
+                <div><strong>Merge to main on Day 7</strong> — squash merge for clean history. Tag release:
+                    <code>git tag v1.0.0-mvp</code>
+                </div>
+            </div>
+            <div class="git-step">
+                <div class="git-num">5</div>
+                <div><strong>Protected branches</strong> — main and develop require PR + passing CI (run tests, lint)
+                </div>
+            </div>
+
+            <h3 style="margin-top:1.5rem">Monorepo Structure</h3>
+            <pre><span class="cmt">hcms/</span>
+├── <span class="key">services/</span>
+│   ├── auth-service/       <span class="cmt"># Spring Boot (Pavan)</span>
+│   ├── claims-service/     <span class="cmt"># Spring Boot (Pavan)</span>
+│   ├── policy-service/     <span class="cmt"># Spring Boot (Pavan)</span>
+│   ├── gateway/            <span class="cmt"># Spring Boot (Pavan)</span>
+│   ├── document-service/   <span class="cmt"># Django (Rahul)</span>
+│   └── admin-service/      <span class="cmt"># Django (Shubham)</span>
+├── <span class="key">frontend/</span>               <span class="cmt"># React (Rahul + Shubham)</span>
+├── <span class="key">docker-compose.yml</span>
+├── <span class="key">nginx.conf</span>
+└── <span class="key">README.md</span></pre>
+
+            <h3>Deployment Options</h3>
+            <div class="card-grid-3">
+                <div class="card">
+                    <h4>Local (MVP)</h4>
+                    <p>Single <code>docker-compose up --build</code> starts all services. PostgreSQL + Redis included.
+                        Nginx on :80 serves React and proxies API.</p>
+                </div>
+                <div class="card">
+                    <h4>Cloud (Demo)</h4>
+                    <p>Deploy to Railway.app or Render.com (free tier). Each service as a separate web service.
+                        PostgreSQL managed DB add-on. Redis add-on for Celery.</p>
+                </div>
+                <div class="card">
+                    <h4>Production-Ready</h4>
+                    <p>AWS EC2/ECS or DigitalOcean App Platform. RDS PostgreSQL. ElastiCache Redis. S3 for documents.
+                        ALB as entry point with SSL termination.</p>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="highlight-box">
+                <h3 style="color:var(--accent2)">Interview-Ready Talking Points</h3>
+                <div class="card-grid" style="margin-top:1.25rem">
+                    <div>
+                        <h4>Architecture</h4>
+                        <ul class="task-list">
+                            <li>"We used bounded context separation — each service owns its data"</li>
+                            <li>"Spring Boot gateway handles cross-cutting concerns so services stay clean"</li>
+                            <li>"Django was chosen for admin because of its built-in admin framework"</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Decisions Made</h4>
+                        <ul class="task-list">
+                            <li>"Refresh token rotation prevents replay attacks"</li>
+                            <li>"Claim state machine prevents invalid transitions at the service layer"</li>
+                            <li>"Audit log is append-only — we never update or delete audit records"</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>What You'd Add Next</h4>
+                        <ul class="task-list">
+                            <li>"Kafka for event streaming between services instead of sync REST"</li>
+                            <li>"ML-based fraud detection on claim amounts"</li>
+                            <li>"Kubernetes with HPA for auto-scaling during peak claim periods"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div><!-- /container -->
+
+    <footer>
+        <div class="footer-logo">
+            <span>⚕</span>
+            HCMS Blueprint
+        </div>
+        <p style="margin-bottom:.4rem">Intelligent Health Claims Management System · v1.0 MVP · 7-Day Build Plan</p>
+        <p>Pavan (Spring Boot) · Rahul (Django) · Shubham (Django) · React · PostgreSQL · Docker</p>
+    </footer>
+
+    <script>
+        // ─── API expand/collapse ───
+        function toggle(header) {
+            const body = header.nextElementSibling;
+            const ch = header.querySelector('.ch');
+            body.classList.toggle('open');
+            if (ch) ch.classList.toggle('open');
+        }
+
+        // ─── Day plan expand/collapse ───
+        function toggleDay(header) {
+            const body = header.nextElementSibling;
+            const chevron = header.querySelector('.chevron');
+            const block = header.parentElement;
+            header.classList.toggle('open');
+            body.classList.toggle('open');
+            chevron.classList.toggle('open');
+            block.classList.toggle('open');
+        }
+
+        // ─── Sprint dashboard scroll helper ───
+        function scrollToDay(num) {
+            const el = document.getElementById('plan');
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+                setTimeout(() => {
+                    const dayBlock = document.getElementById('day-block-' + num);
+                    if (dayBlock) {
+                        const header = dayBlock.querySelector('.day-header');
+                        if (header && !header.classList.contains('open')) {
+                            toggleDay(header);
+                        }
+                        setTimeout(() => dayBlock.scrollIntoView({ behavior: 'smooth', block: 'start' }), 350);
+                    }
+                }, 400);
+            }
+        }
+
+        // ─── Touch support ───
+        document.querySelectorAll('.api-header').forEach(h => {
+            h.addEventListener('touchend', e => { e.preventDefault(); toggle(h); });
+        });
+        document.querySelectorAll('.day-header').forEach(h => {
+            h.addEventListener('touchend', e => { e.preventDefault(); toggleDay(h); });
+        });
+
+        // ─── Nav toggle (mobile) ───
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+        const navOverlay = document.getElementById('navOverlay');
+        const setNavState = isOpen => {
+            navLinks.classList.toggle('open', isOpen);
+            navOverlay.classList.toggle('open', isOpen);
+            navToggle.setAttribute('aria-expanded', String(isOpen));
+            navLinks.setAttribute('aria-hidden', String(!isOpen));
+            document.body.style.overflow = isOpen && window.innerWidth <= 768 ? 'hidden' : '';
+        };
+        navToggle.addEventListener('click', () => setNavState(!navLinks.classList.contains('open')));
+        navOverlay.addEventListener('click', () => setNavState(false));
+
+        // ─── Smooth scroll + active nav ───
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                setNavState(false);
+                document.querySelectorAll('nav a').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) setNavState(false);
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && navLinks.classList.contains('open')) setNavState(false);
+        });
+
+        // ─── Scroll spy ───
+        const sections = document.querySelectorAll('section, .hero-wrap');
+        const navAnchors = document.querySelectorAll('nav a');
+        const onScroll = () => {
+            let cur = '';
+            sections.forEach(s => {
+                if (window.scrollY >= s.offsetTop - 90) cur = s.id || 'overview';
+            });
+            navAnchors.forEach(l => {
+                l.classList.toggle('active', l.getAttribute('href') === '#' + cur);
+            });
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+
+        // ─── IntersectionObserver for reveal animations ───
+        const revealObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // ─── Animated counter for hero stats ───
+        const animateNum = (el, target, suffix = '') => {
+            const duration = 1200;
+            const step = 16;
+            const increment = target / (duration / step);
+            let current = 0;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) { current = target; clearInterval(timer); }
+                el.textContent = (Number.isInteger(target) ? Math.floor(current) : current.toFixed(1)) + suffix;
+            }, step);
+        };
+
+        const statsObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const nums = entry.target.querySelectorAll('.stat-num');
+                    const vals = [7, 3, 6, 30];
+                    const suffixes = ['', '', '', '+'];
+                    nums.forEach((el, i) => animateNum(el, vals[i], suffixes[i]));
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const heroStats = document.querySelector('.hero-stats');
+        if (heroStats) statsObserver.observe(heroStats);
+
+        // ─── Sprint card active state highlight on scroll ───
+        const dayBlocks = document.querySelectorAll('.day-block');
+        const sprintCards = document.querySelectorAll('.sprint-day-card');
+        const dayObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                const id = entry.target.id;
+                const num = id ? id.replace('day-block-', '') : null;
+                if (!num) return;
+                const card = sprintCards[parseInt(num) - 1];
+                if (card) card.classList.toggle('active', entry.isIntersecting);
+            });
+        }, { threshold: 0.5 });
+
+        dayBlocks.forEach(b => dayObserver.observe(b));
+
+        // ─── Prevent double-tap zoom on touch ───
+        // Let touch interactions on buttons and links produce normal click events.
+    </script>
+</body>
+
+</html>
